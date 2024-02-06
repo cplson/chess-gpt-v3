@@ -1,5 +1,3 @@
-let playerPieces;
-
 class Team {
   constructor(name, color) {
     this.name = name;
@@ -8,9 +6,9 @@ class Team {
     this.pieces;
   }
   async updatePieces(state) {
-    // console.log("updatePieces() state: ", state);
+    console.log("updatePieces() state: ", state);
     const response = await axios.get(
-      `http://localhost:5000/api/moveset/state/${state}`
+      `http://localhost:5000/api/moveset/state/${state}/color/${this.color}`
     );
     this.pieces = response.data;
   }

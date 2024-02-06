@@ -16,10 +16,10 @@ export class Game {
   }
 
   async initBoard() {
+    gameState = await getState();
     teams = setTeams();
     for (let i = SQUARES_PER_SIDE; i > 0; i--) {
       for (let j = 0; j < SQUARES_PER_SIDE; j++) {
-        gameState = await getState();
         const square = new Square(i, j, gameState[i - 1][j]);
         this.squares.push(square);
         this.board.appendChild(square.getElement());
@@ -32,7 +32,6 @@ function setTeams() {
   player = new Team("James", "white");
   const gpt = new Team("Chat-GPT", "black");
   player.updatePieces(gameState);
-  //   gpt.updatePieces(gameState);
   return [player, gpt];
 }
 
