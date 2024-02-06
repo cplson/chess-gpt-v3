@@ -9,4 +9,5 @@ window.addEventListener("DOMContentLoaded", async () => {
   //   });
   const game = new Game();
   game.initBoard();
+  // const teams = game.setTeams();
 });
