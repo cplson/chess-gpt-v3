@@ -1,12 +1,17 @@
 const express = require("express");
 const app = express();
+const cors = require("cors");
 const port = 5000;
-require("dotenv").config();
+// require("dotenv").config();
 
-const chatRouter = require("./routes/chat.router.js");
+app.use(cors());
+
 const gameStateRouter = require("./routes/gameState.router.js");
-app.use("/api/chat", chatRouter);
+const chatRouter = require("./routes/chat.router.js");
+// const movesetRouter = require("./routes/moveset.router.js");
 app.use("/api/gameState", gameStateRouter);
+app.use("/api/chat", chatRouter);
+// app.use("/api/moveset", movesetRouter);
 
 // Serve static files
 app.use(express.static("build"));

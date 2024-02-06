@@ -1,10 +1,5 @@
-const OpenAI = require("openai");
 const express = require("express");
 const router = express.Router();
-
-const openai = new OpenAI({
-  apiKey: "",
-});
 
 router.get("/", async (req, res) => {
   // GET route code here

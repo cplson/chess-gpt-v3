@@ -1,6 +1,6 @@
 import { Game, Square } from "./class/Game.js";
 
-window.addEventListener("DOMContentLoaded", () => {
+window.addEventListener("DOMContentLoaded", async () => {
   // document
   //   .getElementById("new-game-button")
   //   .addEventListener("click", async () => {
@@ -9,4 +9,6 @@ window.addEventListener("DOMContentLoaded", () => {
   //   });
   const game = new Game();
   game.initBoard();
+  //   const gameState = await game.getState();
+  //   console.log("gameState", gameState);
 });

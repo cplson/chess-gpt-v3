@@ -5,15 +5,15 @@ const gameMoves = [];
 const gameState = [
   ["lr", "lp", "e", "e", "e", "e", "dp", "dr"],
   ["ln", "lp", "e", "e", "e", "e", "dp", "dn"],
-  ["ld", "lp", "e", "e", "e", "e", "dp", "db"],
+  ["lb", "lp", "e", "e", "e", "e", "dp", "db"],
   ["lq", "lp", "e", "e", "e", "e", "dp", "dq"],
   ["lk", "lp", "e", "e", "e", "e", "dp", "dk"],
-  ["ld", "lp", "e", "e", "e", "e", "dp", "db"],
+  ["lb", "lp", "e", "e", "e", "e", "dp", "db"],
   ["ln", "lp", "e", "e", "e", "e", "dp", "dn"],
   ["lr", "lp", "e", "e", "e", "e", "dp", "dr"],
 ];
 router.get("/", async (req, res) => {
-  res.send(console.log("yay"));
+  res.send(gameState);
 });
 
 module.exports = router;
