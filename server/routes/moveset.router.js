@@ -1,23 +1,39 @@
 const express = require("express");
 const router = express.Router();
 
-let playerColor;
 const state = [];
 router.get("/state/:state/color/:color", (req, res) => {
-  playerColor = req.params.color;
+  const playerColor = req.params.color;
+  const enemyColor = playerColor == "white" ? "black" : "white";
   const unformattedState = req.params.state.split(",");
   formatState(unformattedState);
-  const pieces = filterTeamPieces(playerColor);
+  const allPieces = formatPieces();
+  const teamPieces = filterTeamPieces(playerColor, allPieces);
+  const enemyPieces = filterTeamPieces(enemyColor, allPieces);
+  console.log("teamPieces: ", teamPieces);
+  console.log("enemyPieces: ", enemyPieces);
   res.send("eyyy");
 });
 
-function filterTeamPieces(color) {
-  const FILTERED_COLOR = color == "white" ? "l" : "d";
-  const teamPieces = [];
-
+function formatPieces() {
+  const formattedPieces = [];
   for (let i = 0; i < 8; i++) {
-    teamPieces.push(...state[i].filter((piece) => piece[0] == FILTERED_COLOR));
+    for (let j = 0; j < 8; j++) {
+      if (state[i][j] != "e") {
+        const str = state[i][j];
+        const color = str[0] == "l" ? "white" : "black";
+        const pieceType = str[1];
+        const moveset = [];
+        formattedPieces.push({ pieceType, color, moveset });
+      }
+    }
   }
+  return formattedPieces;
+}
+
+function filterTeamPieces(color, allPieces) {
+  const teamPieces = [];
+  teamPieces.push(...allPieces.filter((piece) => piece.color == color));
   return teamPieces;
 }
 
