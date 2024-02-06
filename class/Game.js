@@ -28,7 +28,7 @@ export class Square {
     const COLUMN = String(y).charCodeAt(0);
     const COLUMN_LETTER = String.fromCharCode(COLUMN + 17);
 
-    console.log("x: ", ROW, "\ny: ", COLUMN_LETTER);
+    // console.log("x: ", ROW, "\ny: ", COLUMN_LETTER);
     this.element = document.createElement("div");
     this.element.classList.add(
       `square`,
@@ -40,10 +40,22 @@ export class Square {
       const pieceInSquare = new Piece(piece);
       this.element.appendChild(pieceInSquare.pieceImg);
     }
+    this.initEventListener(this.element);
   }
 
   getElement() {
     return this.element;
+  }
+
+  async initEventListener(element) {
+    console.log("inside initListener");
+    element.addEventListener("click", async () => {
+      const previous = document.getElementsByClassName("targeted-square");
+      if (previous[0]) {
+        previous[0].classList.remove("targeted-square");
+      }
+      element.classList.add("targeted-square");
+    });
   }
 }
 

@@ -4,6 +4,7 @@
   box-sizing: border-box;
   font-family: "Montserrat", sans-serif;
   font-weight: 400;
+  box-sizing: border-box;
 }
 
 body {
@@ -37,8 +38,22 @@ body {
   background-color: #effbff;
 }
 
+.square:hover,
+.square:focus {
+  border: solid 2px #365153;
+  background-color: #7ebdc2;
+}
+
+.targeted-square {
+  border: solid 2px #bb4430;
+  background-color: #f3dfa2;
+}
+
+.square:hover > img {
+  padding: 0px;
+}
 .piece {
-  padding: 4px;
+  padding: 6px;
   width: 100%;
 }
 
