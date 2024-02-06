@@ -1,11 +1,19 @@
 const express = require("express");
 const router = express.Router();
 
-let state;
+const state = [];
 router.get("/state/:state", (req, res) => {
-  state = req.params.state;
-  console.log("inside moveset router:", state);
+  const unformattedState = req.params.state.split(",");
+  formatState(unformattedState);
+    console.log(state);
   res.send("eyyy");
 });
+
+function formatState(unformattedState) {
+    for (let i = 0; i < 8; i++) {
+        const row = unformattedState.slice(i * 8, (i + 1) * 8);
+        state.push(row);
+    }
+}
 
 module.exports = router;

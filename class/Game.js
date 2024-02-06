@@ -4,6 +4,7 @@ import Team from "./Team.js";
 const SQUARES_PER_SIDE = 8;
 let teams;
 let gameState;
+let player;
 
 export class Game {
   constructor() {
@@ -28,10 +29,10 @@ export class Game {
 }
 
 function setTeams() {
-  const player = new Team("James", "white");
+  player = new Team("James", "white");
   const gpt = new Team("Chat-GPT", "black");
   player.updatePieces(gameState);
-  gpt.updatePieces(gameState);
+  //   gpt.updatePieces(gameState);
   return [player, gpt];
 }
 

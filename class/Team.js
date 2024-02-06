@@ -8,7 +8,7 @@ class Team {
     this.pieces;
   }
   async updatePieces(state) {
-    console.log("updatePieces() state: ", state);
+    // console.log("updatePieces() state: ", state);
     const response = await axios.get(
       `http://localhost:5000/api/moveset/state/${state}`
     );
