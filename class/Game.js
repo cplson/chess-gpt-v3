@@ -2,7 +2,7 @@ import Piece from "./Piece.js";
 import Team from "./Team.js";
 
 const SQUARES_PER_SIDE = 8;
-const teams = setTeams();
+let teams;
 let gameState;
 
 export class Game {
@@ -23,14 +23,15 @@ export class Game {
         this.board.appendChild(square.getElement());
       }
     }
+    teams = setTeams();
   }
 }
 
 function setTeams() {
   const player = new Team("James", "white");
   const gpt = new Team("Chat-GPT", "black");
-  player.updatePieces();
-  gpt.updatePieces();
+  player.updatePieces(gameState);
+  gpt.updatePieces(gameState);
   return [player, gpt];
 }
 
@@ -77,7 +78,7 @@ async function getState() {
 
 function startNewTurn() {
   teams.forEach((team) => {
-    team.updatePieces();
+    team.updatePieces(gameState);
     team.isTurn = !isTurn;
   });
 }
