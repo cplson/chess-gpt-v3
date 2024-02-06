@@ -3,14 +3,14 @@ const router = express.Router();
 
 const gameMoves = [];
 const gameState = [
-  ["lr", "lp", "e", "e", "e", "e", "dp", "dr"],
-  ["ln", "lp", "e", "e", "e", "e", "dp", "dn"],
-  ["lb", "lp", "e", "e", "e", "e", "dp", "db"],
-  ["lq", "lp", "e", "e", "e", "e", "dp", "dq"],
-  ["lk", "lp", "e", "e", "e", "e", "dp", "dk"],
-  ["lb", "lp", "e", "e", "e", "e", "dp", "db"],
-  ["ln", "lp", "e", "e", "e", "e", "dp", "dn"],
-  ["lr", "lp", "e", "e", "e", "e", "dp", "dr"],
+  ["lr", "ln", "lb", "lq", "lk", "lb", "ln", "lr"],
+  ["lp", "lp", "lp", "lp", "lp", "lp", "lp", "lp"],
+  ["e", "e", "e", "e", "e", "e", "e", "e"],
+  ["e", "e", "e", "e", "e", "e", "e", "e"],
+  ["e", "e", "e", "e", "e", "e", "e", "e"],
+  ["e", "e", "e", "e", "e", "e", "e", "e"],
+  ["dp", "dp", "dp", "dp", "dp", "dp", "dp", "dp"],
+  ["dr", "dn", "db", "dq", "dk", "db", "dn", "dr"],
 ];
 router.get("/", async (req, res) => {
   res.send(gameState);

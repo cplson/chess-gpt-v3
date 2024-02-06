@@ -12,7 +12,6 @@ export class Game {
 
   async initBoard() {
     const gameState = await getState();
-    console.log(gameState);
     for (let i = SQUARES_PER_SIDE; i > 0; i--) {
       for (let j = 0; j < SQUARES_PER_SIDE; j++) {
         const square = new Square(i, j, gameState[i - 1][j]);
@@ -38,9 +37,6 @@ export class Square {
       `${COLUMN_LETTER}`
     );
     if (piece != "e") {
-      //     const pieceImg = document.createElement("img");
-      // pieceImg.src = this.pieceUrl;
-      // pieceImg.alt = "piece";
       const pieceInSquare = new Piece(piece);
       this.element.appendChild(pieceInSquare.pieceImg);
     }

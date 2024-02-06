@@ -1,4 +1,4 @@
-import { Game, Square } from "./class/Game.js";
+import { Game } from "./class/Game.js";
 
 window.addEventListener("DOMContentLoaded", async () => {
   // document
@@ -9,6 +9,4 @@ window.addEventListener("DOMContentLoaded", async () => {
   //   });
   const game = new Game();
   game.initBoard();
-  //   const gameState = await game.getState();
-  //   console.log("gameState", gameState);
 });

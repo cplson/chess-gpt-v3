@@ -7,7 +7,7 @@
 }
 
 body {
-  background-color: #260f26;
+  background-color: #5555c1;
 }
 
 #chess-container {
@@ -27,11 +27,12 @@ body {
 }
 
 .black-square {
-  background-color: #2d2a32;
+  background-color: #b2a5c9;
 }
 
 .white-square {
-  background-color: #e8e9eb;
+  /* background-color: #e8e9eb; */
+  background-color: #effbff;
 }
 
 .piece {
@@ -41,7 +42,7 @@ body {
 #new-game-button {
   margin: 64px;
   padding: 8px 12px;
-  background-color: #1e2ede;
+  background-color: #23022E;
   color: #e8e9eb;
   border: none;
   border-radius: 4px;
@@ -49,5 +50,5 @@ body {
 }
 
 #new-game-button:active {
-  background-color: #101ede;
+  background-color: #23022E;
 }
