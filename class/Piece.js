@@ -4,6 +4,6 @@ export default class Piece {
     this.pieceImg = document.createElement("img");
     this.pieceImg.src = this.pieceUrl;
     this.pieceImg.alt = "piece";
-    this.pieceImg.classList.add(state[0] == "l" ? "light" : "dark");
+    this.pieceImg.classList.add("piece");
   }
 }
