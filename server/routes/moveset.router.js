@@ -44,10 +44,20 @@ function formatState(unformattedState) {
   }
 }
 
+function determineMoveType(piece) {
+  if (piece.pieceType == "p") {
+    // return pawnMoves(piece)
+  } else if (piece.pieceType == ("q" || "r" || "b")) {
+    // return extenderMoves(piece)
+  } else {
+    // return nonExtenderMoves(piece)
+  }
+}
+
 module.exports = router;
 
 /*
-    0. Create function to format pieces
-    1. Get pieces for the player
+    X. Create function to format pieces
+    X. Get pieces for the player
     2. for every player piece, get all of its moves
 */
