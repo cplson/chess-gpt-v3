@@ -5,7 +5,6 @@ const state = [];
 router.get("/state/:state", (req, res) => {
   const unformattedState = req.params.state.split(",");
   formatState(unformattedState);
-    console.log(state);
   res.send("eyyy");
 });
 
@@ -15,5 +14,7 @@ function formatState(unformattedState) {
         state.push(row);
     }
 }
+
+
 
 module.exports = router;

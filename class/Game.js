@@ -16,6 +16,7 @@ export class Game {
   }
 
   async initBoard() {
+    teams = setTeams();
     for (let i = SQUARES_PER_SIDE; i > 0; i--) {
       for (let j = 0; j < SQUARES_PER_SIDE; j++) {
         gameState = await getState();
@@ -24,7 +25,6 @@ export class Game {
         this.board.appendChild(square.getElement());
       }
     }
-    teams = setTeams();
   }
 }
 
@@ -62,12 +62,17 @@ export class Square {
   }
 
   async initEventListener(element, x, y, piece) {
+    const IS_USER_PIECE =
+      (piece[0] == "d" && player.color == "black") ||
+      (piece[0] == "l" && player.color == "white");
     element.addEventListener("click", async () => {
-      const previous = document.getElementsByClassName("targeted-square");
-      if (previous[0]) {
-        previous[0].classList.remove("targeted-square");
+      if (IS_USER_PIECE) {
+        const previous = document.getElementsByClassName("targeted-square");
+        if (previous[0]) {
+          previous[0].classList.remove("targeted-square");
+        }
+        element.classList.add("targeted-square");
       }
-      element.classList.add("targeted-square");
     });
   }
 }
