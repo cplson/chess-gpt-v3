@@ -49,6 +49,10 @@ body {
   background-color: #f3dfa2;
 }
 
+.move-location {
+  background-color: #7ebdc2;
+}
+
 .square:hover > img {
   padding: 0px;
 }

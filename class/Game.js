@@ -37,43 +37,81 @@ function setTeams() {
 
 export class Square {
   constructor(x, y, piece = "e") {
-    const ROW = x;
-    const COLUMN = String(y).charCodeAt(0);
-    const COLUMN_LETTER = String.fromCharCode(COLUMN + 17);
-
-    // console.log("x: ", ROW, "\ny: ", COLUMN_LETTER);
     this.element = document.createElement("div");
+    this.x = x;
+    this.y = y;
     this.element.classList.add(
       `square`,
-      Math.floor(x + y) % 2 == 0 ? "white-square" : "black-square",
-      `${String(ROW)}`,
-      `${COLUMN_LETTER}`
+      Math.floor(this.x + this.y) % 2 == 0 ? "white-square" : "black-square"
     );
+    this.convertToSquareLocation();
+
     if (piece != "e") {
       const pieceInSquare = new Piece(piece);
       this.element.appendChild(pieceInSquare.pieceImg);
     }
-    this.initEventListener(this.element, x, y, piece);
+    this.initEventListener(piece);
   }
 
   getElement() {
     return this.element;
   }
 
-  async initEventListener(element, x, y, piece) {
+  async initEventListener(piece) {
     const IS_USER_PIECE =
       (piece[0] == "d" && player.color == "black") ||
       (piece[0] == "l" && player.color == "white");
-    element.addEventListener("click", async () => {
-      if (IS_USER_PIECE) {
+    this.element.addEventListener("click", async () => {
+      if (IS_USER_PIECE && player.isTurn) {
         const previous = document.getElementsByClassName("targeted-square");
         if (previous[0]) {
           previous[0].classList.remove("targeted-square");
         }
-        element.classList.add("targeted-square");
+        this.element.classList.add("targeted-square");
+        const targetedPiece = player.pieces.filter((piece) => {
+          return piece.row == this.x - 1 && piece.col == this.y;
+        });
+        if (targetedPiece[0] != null && targetedPiece[0] != undefined) {
+          highlightAllMoves(targetedPiece[0].moveset);
+        }
       }
     });
   }
+  convertToSquareLocation() {
+    const ROW = this.x;
+    const COLUMN = String(this.y).charCodeAt(0);
+    const COLUMN_LETTER = String.fromCharCode(COLUMN + 17);
+
+    this.element.classList.add(`${String(ROW)}`, `${COLUMN_LETTER}`);
+  }
+}
+
+function highlightMove(move) {
+  const ROW = move[0] + 1;
+  const COLUMN = String(move[1]).charCodeAt(0);
+  const COLUMN_LETTER = String.fromCharCode(COLUMN + 17);
+
+  const element = document.getElementsByClassName(`${ROW} ${COLUMN_LETTER}`);
+  console.log(element);
+  element[0].classList.add("move-location");
+}
+function highlightAllMoves(moves) {
+  console.log("inside highlight");
+  const previouslyHighlighted =
+    document.getElementsByClassName("move-location");
+  if (previouslyHighlighted.length > 0) {
+    // console.log("attempt to remove highlight");
+    // previouslyHighlighted.map((element) => {
+    //   console.log(element);
+    //   element.classlist.remove("move-location");
+    // });
+    for (let i = previouslyHighlighted.length - 1; i >= 0; i--) {
+      previouslyHighlighted[i].classList.remove("move-location");
+    }
+  }
+  moves.forEach((move) => {
+    highlightMove(move);
+  });
 }
 
 async function getState() {

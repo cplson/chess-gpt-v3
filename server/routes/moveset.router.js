@@ -12,7 +12,7 @@ router.get("/state/:state/color/:color", (req, res) => {
   const teamPieces = filterTeamPieces(playerColor, allPieces);
   const enemyPieces = filterTeamPieces(enemyColor, allPieces);
   getMoves(teamPieces);
-  res.send("eyyy");
+  res.send(teamPieces);
 });
 
 function pawnMoves(pawn) {
