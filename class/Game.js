@@ -90,13 +90,18 @@ export class Square {
 }
 
 async function move(piece, toSquare) {
-  const INVERTED_ROW = Math.abs(SQUARES_PER_SIDE - piece.row);
-  const FROM_SQUARE = squares[INVERTED_ROW * SQUARES_PER_SIDE + piece.col];
-  console.log(toSquare.x);
+  let invertedRow = Math.abs(SQUARES_PER_SIDE - piece.row);
+  console.log("invertedRow", invertedRow);
+  if (invertedRow == 8) {
+    invertedRow = 0;
+  }
+  //   const FROM_SQUARE = squares[invertedRow * SQUARES_PER_SIDE + piece.col];
+  //   const FROM_SQUARE = squares[piece.row * SQUARES_PER_SIDE + piece.col];
+
+  console.log(piece, toSquare);
   const response = await axios
     .post("http://localhost:5000/api/gameState", {
-      fromSquare: FROM_SQUARE,
-      toX: toSquare.x,
+      toX: toSquare.x - 1,
       toY: toSquare.y,
       piece: piece,
     })
