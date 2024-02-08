@@ -15,8 +15,43 @@ router.get("/state/:state/color/:color", (req, res) => {
   res.send(teamPieces);
 });
 
+function nonExtenderMoves(piece) {
+  const ENEMY_INDICATOR = piece.color == "white" ? "d" : "l";
+  let set;
+  if (piece.pieceType == "k") {
+    set = [
+      [1, 1],
+      [1, -1],
+      [-1, 1],
+      [-1, -1],
+      [0, 1],
+      [0, -1],
+      [-1, 0],
+      [1, 0],
+    ];
+  } else {
+    set = [
+      [-2, 1],
+      [-2, -1],
+      [2, 1],
+      [2, -1],
+      [1, 2],
+      [-1, 2],
+      [1, -2],
+      [-1, -2],
+    ];
+  }
+
+  set.forEach((move) => {
+    const ROW = piece.row + move[0];
+    const COL = piece.col + move[1];
+    if (isMoveValid(ROW, COL, ENEMY_INDICATOR)[0]) {
+      piece.moveset.push([ROW, COL]);
+    }
+  });
+}
+
 function extenderMoves(extender) {
-  const Y_DIRECTION = extender.color == "white" ? 1 : -1;
   const ENEMY_INDICATOR = extender.color == "white" ? "d" : "l";
   let set;
   if (extender.pieceType == "q") {
@@ -127,7 +162,7 @@ function determineMoveType(piece) {
   ) {
     extenderMoves(piece);
   } else {
-    // nonExtenderMoves(piece)
+    nonExtenderMoves(piece);
   }
 }
 
