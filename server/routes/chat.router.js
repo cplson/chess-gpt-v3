@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-
+router.use(express.json());
 router.get("/", async (req, res) => {
   // GET route code here
   // const completion = await openai.chat.completions.create({

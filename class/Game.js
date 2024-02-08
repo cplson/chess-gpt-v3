@@ -5,6 +5,8 @@ const SQUARES_PER_SIDE = 8;
 let teams;
 let gameState;
 let player;
+let selectedPiece;
+const squares = [];
 
 export class Game {
   constructor() {
@@ -21,18 +23,15 @@ export class Game {
     for (let i = SQUARES_PER_SIDE; i > 0; i--) {
       for (let j = 0; j < SQUARES_PER_SIDE; j++) {
         const square = new Square(i, j, gameState[i - 1][j]);
-        this.squares.push(square);
+        squares.push(square);
         this.board.appendChild(square.getElement());
       }
     }
   }
-}
 
-function setTeams() {
-  player = new Team("James", "white");
-  const gpt = new Team("Chat-GPT", "black");
-  player.updatePieces(gameState);
-  return [player, gpt];
+  async getSquareAt(row, col) {
+    return this.squares[row * SQUARES_PER_SIDE + col];
+  }
 }
 
 export class Square {
@@ -68,12 +67,16 @@ export class Square {
           previous[0].classList.remove("targeted-square");
         }
         this.element.classList.add("targeted-square");
-        const targetedPiece = player.pieces.filter((piece) => {
+        const targetedPieces = player.pieces.filter((piece) => {
           return piece.row == this.x - 1 && piece.col == this.y;
         });
-        if (targetedPiece[0] != null && targetedPiece[0] != undefined) {
-          highlightAllMoves(targetedPiece[0].moveset);
+        selectedPiece = targetedPieces[0];
+        if (selectedPiece != null && selectedPiece != undefined) {
+          highlightAllMoves(selectedPiece.moveset);
         }
+      }
+      if (player.isTurn && this.element.classList.contains("move-location")) {
+        move(selectedPiece, this);
       }
     });
   }
@@ -86,17 +89,35 @@ export class Square {
   }
 }
 
+async function move(piece, toSquare) {
+  const INVERTED_ROW = Math.abs(SQUARES_PER_SIDE - piece.row);
+  const FROM_SQUARE = squares[INVERTED_ROW * SQUARES_PER_SIDE + piece.col];
+  console.log(toSquare.x);
+  const response = await axios
+    .post("http://localhost:5000/api/gameState", {
+      fromSquare: FROM_SQUARE,
+      toX: toSquare.x,
+      toY: toSquare.y,
+      piece: piece,
+    })
+    .then((res) => {
+      if (res.status == 201) {
+        console.log("good");
+      } else {
+        console.log(res);
+      }
+    });
+}
+
 function highlightMove(move) {
   const ROW = move[0] + 1;
   const COLUMN = String(move[1]).charCodeAt(0);
   const COLUMN_LETTER = String.fromCharCode(COLUMN + 17);
 
   const element = document.getElementsByClassName(`${ROW} ${COLUMN_LETTER}`);
-  console.log(element);
   element[0].classList.add("move-location");
 }
 function highlightAllMoves(moves) {
-  console.log("inside highlight");
   const previouslyHighlighted =
     document.getElementsByClassName("move-location");
   if (previouslyHighlighted.length > 0) {
@@ -119,4 +140,19 @@ function startNewTurn() {
     team.updatePieces(gameState);
     team.isTurn = !isTurn;
   });
+}
+
+function setTeams() {
+  player = new Team("James", "white");
+  const gpt = new Team("Chat-GPT", "black");
+  player.updatePieces(gameState);
+  return [player, gpt];
+}
+
+function getSquareElement(row, col) {
+  const ROW = row + 1;
+  const COLUMN = String(col).charCodeAt(0);
+  const COLUMN_LETTER = String.fromCharCode(COLUMN + 17);
+
+  return document.getElementsByClassName(`${ROW} ${COLUMN_LETTER}`);
 }

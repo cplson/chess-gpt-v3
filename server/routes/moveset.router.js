@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+router.use(express.json());
 
 const SQUARES_PER_SIDE = 8;
 const state = [];

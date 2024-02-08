@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-
+router.use(express.json());
 const gameMoves = [];
 const gameState = [
   ["lr", "ln", "lb", "lq", "lk", "lb", "ln", "lr"],
@@ -14,6 +14,16 @@ const gameState = [
 ];
 router.get("/", async (req, res) => {
   res.send(gameState);
+});
+
+router.post("/", async (req, res) => {
+  console.log(req.body);
+  // const fromSquare = req.body.fromSquare;
+  // const toSquare = [req.body.toX, req.body.toY];
+  // const piece = req.body.piece;
+
+  // console.log(fromSquare, toSquare, piece);
+  res.sendStatus(201);
 });
 
 module.exports = router;
