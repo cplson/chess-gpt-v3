@@ -4,8 +4,10 @@ import Team from "./Team.js";
 const SQUARES_PER_SIDE = 8;
 let teams;
 let gameState;
+let gameMoves;
 let player;
 let selectedPiece;
+let state;
 const squares = [];
 
 export class Game {
@@ -18,7 +20,9 @@ export class Game {
   }
 
   async initBoard() {
-    gameState = await getState();
+    state = await getState();
+    gameState = state.gameState;
+    gameMoves = state.gameMoves;
     teams = setTeams();
     for (let i = SQUARES_PER_SIDE; i > 0; i--) {
       for (let j = 0; j < SQUARES_PER_SIDE; j++) {
@@ -60,17 +64,13 @@ export class Square {
     this.element.addEventListener("click", async () => {
       let occupiedBy;
       const square = getSquareElement(this.x, this.y);
-      //   console.log("square element in event listener:", square);
       const TEAMS_TURN = player.isTurn ? teams[0] : teams[1];
       const SQUARE_OCCUPIED = square.childNodes.length > 0;
       if (SQUARE_OCCUPIED) {
         occupiedBy = square.childNodes[0];
-        // console.log("square child: ", occupiedBy);
-        // console.log("TEAMS_TURN: ", TEAMS_TURN);
 
         const IS_TEAM_PIECE =
           SQUARE_OCCUPIED && occupiedBy.classList.contains(TEAMS_TURN.color);
-        // console.log("IS_TEAM_PIECE: ", IS_TEAM_PIECE);
 
         if (IS_TEAM_PIECE) {
           const previous = document.getElementsByClassName("targeted-square");
@@ -81,16 +81,12 @@ export class Square {
           const targetedPieces = TEAMS_TURN.pieces.filter((piece) => {
             return piece.row == this.x - 1 && piece.col == this.y;
           });
-          //   console.log("targeted piece:", targetedPieces[0]);
           selectedPiece = targetedPieces[0];
-        }
-        // console.log("selectedPIece", selectedPiece);
-        if (selectedPiece != null && selectedPiece != undefined) {
-          highlightAllMoves(selectedPiece.moveset);
-          //   console.log("selectedPiece: ", selectedPiece);
+          if (selectedPiece != null && selectedPiece != undefined) {
+            highlightAllMoves(selectedPiece.moveset);
+          }
         }
       }
-      //   console.log("square", square);
       if (TEAMS_TURN.isTurn && square.classList.contains("move-location")) {
         move(selectedPiece, this, square);
       }
@@ -100,21 +96,16 @@ export class Square {
     const ROW = this.x;
     const COLUMN = String(this.y).charCodeAt(0);
     const COLUMN_LETTER = String.fromCharCode(COLUMN + 17);
-    // console.log([ROW, COLUMN_LETTER]);
     this.element.classList.add(`${String(ROW)}`, `${COLUMN_LETTER}`);
   }
 }
 
 async function move(fromSquarePiece, toSquare, toSquareElement) {
-  //   console.log("fromSquarePiece in move:", fromSquarePiece);
-  //   console.log("toSquare in move:", toSquare);
-  //   console.log("toSquareElement in move:", toSquareElement);
   let invertedRow = Math.abs(SQUARES_PER_SIDE - fromSquarePiece.row);
   if (invertedRow == 8) {
     invertedRow = 0;
   }
 
-  //   console.log(fromSquarePiece, toSquare);
   const response = await axios
     .post("http://localhost:5000/api/gameState", {
       toX: toSquare.x - 1,
@@ -123,8 +114,6 @@ async function move(fromSquarePiece, toSquare, toSquareElement) {
     })
     .then((res) => {
       if (res.status == 201) {
-        // renderMove()
-        // const toSquare = getSquareElement(fromSquarePiece.row, fromSquarePiece.col);
         renderMove(toSquareElement, toSquare, fromSquarePiece);
         transitionTurns();
       } else {
@@ -134,24 +123,16 @@ async function move(fromSquarePiece, toSquare, toSquareElement) {
 }
 
 function renderMove(toSquareElement, toSquare, fromSquarePiece) {
-  //   console.log("toSquareElement in renderMove():", toSquareElement);
-  //   console.log("toSquare in renderMove()", toSquare);
-  //   console.log("fromSquarePiece in renderMove()", fromSquarePiece);
   // get the image of the piece thats being moved
   const fromSquareElement = getSquareElement(
     fromSquarePiece.row + 1,
     fromSquarePiece.col
   );
-  //   console.log("fromSquareElement in renderMove()", fromSquareElement);
 
   const pieceImg = fromSquareElement.children[0];
   if (toSquareElement.children[0]) {
     toSquareElement.removeChild(toSquareElement.children[0]);
   }
-  // FIXED RENDER ISSUE, NOW NEED TO FIGURE OUT HOW TO UPDATE THE MOVESET EACH TURN
-  // INITIAL THOUGHTS
-  // add team function to update its team moves and call it during or after transition turn function
-
   // remove piece from square that the piece came from
   // and add to the element that the piece moved too
   fromSquareElement.removeChild(pieceImg);
@@ -194,20 +175,20 @@ async function transitionTurns() {
   for (let i = highlightedSquares.length - 1; i >= 0; i--) {
     highlightedSquares[i].classList.remove("move-location");
   }
-  gameState = await getState();
-  console.log(gameState);
+  state = await getState();
+  gameState = state.gameState;
+  gameMoves = state.gameMoves;
   teams.forEach((team) => {
     team.toggleTurn();
-    team.updatePieces(gameState);
-    // console.log(`${team.name}s pieces`, team.pieces);
+    team.updatePieces(gameState, gameMoves);
   });
-  //   console.log(gameState);
+  console.log("gameMoves after turn transition: ", gameMoves);
 }
 
 function setTeams() {
   player = new Team("James", "white");
   const gpt = new Team("Chat-GPT", "black");
-  player.updatePieces(gameState);
+  player.updatePieces(gameState, gameMoves);
   return [player, gpt];
 }
 

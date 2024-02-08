@@ -13,7 +13,7 @@ const gameState = [
   ["e", "dn", "db", "dq", "dk", "db", "dn", "dr"],
 ];
 router.get("/", async (req, res) => {
-  res.send(gameState);
+  res.send({ gameState, gameMoves });
 });
 
 router.post("/", async (req, res) => {
@@ -25,13 +25,15 @@ router.post("/", async (req, res) => {
     gameState[toSquare[0]][toSquare[1]] =
       piece.color == "white" ? "l" + piece.pieceType : "d" + piece.pieceType;
     gameState[piece.row][piece.col] = "e";
+    let moveOrder = gameMoves.length;
     gameMoves.push({
       piece: piece,
       from: [piece.row, piece.col],
       to: toSquare,
       takenPiece: TAKEN_PIECE,
+      moveOrder: moveOrder,
     });
-    // console.log("gamestate out:", gameState);
+    console.log("gameMoves out:", gameMoves);
 
     res.sendStatus(201);
   } catch (err) {

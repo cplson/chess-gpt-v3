@@ -4,13 +4,20 @@ router.use(express.json());
 
 const SQUARES_PER_SIDE = 8;
 const state = [];
-router.get("/state/:state/color/:color", (req, res) => {
+const moveHistory = [];
+
+router.post("/updateState", (req, res) => {
+  const unformattedState = req.body.gameState;
+  formatState(unformattedState);
+  moveHistory.push(req.body.moveHistory[req.body.moveHistory.length - 1]);
+  res.sendStatus(201);
+});
+
+router.get("/color/:color", (req, res) => {
   const playerColor = req.params.color;
   const enemyColor = playerColor == "white" ? "black" : "white";
-  const unformattedState = req.params.state.split(",");
-  formatState(unformattedState);
+
   if (playerColor == "white") {
-    console.log("gamestate in moverouter: ", state);
   }
   const allPieces = formatPieces();
   const teamPieces = filterTeamPieces(playerColor, allPieces);
@@ -207,18 +214,8 @@ function filterTeamPieces(color, allPieces) {
 function formatState(unformattedState) {
   state.length = 0;
   for (let i = 0; i < SQUARES_PER_SIDE; i++) {
-    const row = unformattedState.slice(
-      i * SQUARES_PER_SIDE,
-      (i + 1) * SQUARES_PER_SIDE
-    );
-    state.push(row);
+    state.push(unformattedState[i]);
   }
 }
 
 module.exports = router;
-
-/*
-    X. Create function to format pieces
-    X. Get pieces for the player
-    2. for every player piece, get all of its moves
-*/
