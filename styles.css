@@ -51,6 +51,7 @@ body {
 
 .move-location {
   background-color: #7ebdc2;
+  border: solid 2px #573280;
 }
 
 .square:hover > img {

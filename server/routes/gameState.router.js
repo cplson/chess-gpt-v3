@@ -4,7 +4,7 @@ const router = express.Router();
 const gameMoves = [];
 const gameState = [
   ["lr", "ln", "lb", "lq", "lk", "lb", "ln", "lr"],
-  ["e", "lp", "lp", "lp", "lp", "lp", "lp", "lp"],
+  ["e", "lp", "lp", "lp", "e", "lp", "lp", "lp"],
   ["e", "e", "e", "e", "e", "dp", "e", "dp"],
   ["e", "e", "e", "e", "e", "e", "e", "e"],
   ["lp", "e", "e", "e", "e", "e", "e", "e"],

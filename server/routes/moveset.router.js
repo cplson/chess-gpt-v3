@@ -15,6 +15,79 @@ router.get("/state/:state/color/:color", (req, res) => {
   res.send(teamPieces);
 });
 
+function extenderMoves(extender) {
+  const Y_DIRECTION = extender.color == "white" ? 1 : -1;
+  const ENEMY_INDICATOR = extender.color == "white" ? "d" : "l";
+  let set;
+  if (extender.pieceType == "q") {
+    set = [
+      [1, 1],
+      [1, -1],
+      [-1, 1],
+      [-1, -1],
+      [0, 1],
+      [0, -1],
+      [-1, 0],
+      [1, 0],
+    ];
+  } else if (extender.pieceType == "b") {
+    set = [
+      [1, 1],
+      [1, -1],
+      [-1, 1],
+      [-1, -1],
+    ];
+  } else if (extender.pieceType == "r") {
+    set = [
+      [0, 1],
+      [0, -1],
+      [-1, 0],
+      [1, 0],
+    ];
+  }
+  set.forEach((direction) => {
+    let ableToMoveForward = true;
+    let i = 1;
+    let row;
+    let col;
+    while (ableToMoveForward) {
+      row = extender.row + i * direction[0];
+      col = extender.col + i * direction[1];
+      let isValid = isMoveValid(row, col, ENEMY_INDICATOR);
+      if (isValid[0]) {
+        extender.moveset.push([row, col]);
+        if (isValid[1] != "e") {
+          ableToMoveForward = false;
+        }
+      } else {
+        ableToMoveForward = false;
+      }
+      i++;
+    }
+  });
+  // console.log(extender.moveset)
+}
+
+function isMoveValid(ROW, COL, ENEMY_INDICATOR) {
+  // check if move is on board
+  if (
+    ROW >= 0 &&
+    ROW < SQUARES_PER_SIDE &&
+    COL >= 0 &&
+    COL < SQUARES_PER_SIDE
+  ) {
+    // then check if square is occupied
+    if (state[ROW][COL][0] == "e" || state[ROW][COL][0] == ENEMY_INDICATOR) {
+      // if occupied, by what? determine action
+      return [true, state[ROW][COL]];
+    } else {
+      return [false];
+    }
+  } else {
+    return [false];
+  }
+}
+
 function pawnMoves(pawn) {
   const HOME_ROW = pawn.color == "white" ? 1 : 6;
   const Y_DIRECTION = pawn.color == "white" ? 1 : -1;
@@ -42,20 +115,19 @@ function pawnMoves(pawn) {
       pawn.moveset.push([pawn.row + Y_DIRECTION + Y_DIRECTION, pawn.col]);
     }
   }
-  console.log(pawn.moveset);
 }
 
 function determineMoveType(piece) {
   if (piece.pieceType == "p") {
-    return pawnMoves(piece);
+    pawnMoves(piece);
   } else if (
     piece.pieceType == "q" ||
     piece.pieceType == "r" ||
     piece.pieceType == "b"
   ) {
-    // return extenderMoves(piece)
+    extenderMoves(piece);
   } else {
-    // return nonExtenderMoves(piece)
+    // nonExtenderMoves(piece)
   }
 }
 

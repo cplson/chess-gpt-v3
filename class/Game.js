@@ -100,11 +100,6 @@ function highlightAllMoves(moves) {
   const previouslyHighlighted =
     document.getElementsByClassName("move-location");
   if (previouslyHighlighted.length > 0) {
-    // console.log("attempt to remove highlight");
-    // previouslyHighlighted.map((element) => {
-    //   console.log(element);
-    //   element.classlist.remove("move-location");
-    // });
     for (let i = previouslyHighlighted.length - 1; i >= 0; i--) {
       previouslyHighlighted[i].classList.remove("move-location");
     }
