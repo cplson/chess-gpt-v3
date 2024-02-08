@@ -10,7 +10,12 @@ class Team {
     const response = await axios.get(
       `http://localhost:5000/api/moveset/state/${state}/color/${this.color}`
     );
+
     this.pieces = response.data;
+    // console.log(this.pieces);
+  }
+  toggleTurn() {
+    this.isTurn = !this.isTurn;
   }
 }
 

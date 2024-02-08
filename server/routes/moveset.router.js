@@ -9,6 +9,9 @@ router.get("/state/:state/color/:color", (req, res) => {
   const enemyColor = playerColor == "white" ? "black" : "white";
   const unformattedState = req.params.state.split(",");
   formatState(unformattedState);
+  if (playerColor == "white") {
+    console.log("gamestate in moverouter: ", state);
+  }
   const allPieces = formatPieces();
   const teamPieces = filterTeamPieces(playerColor, allPieces);
   const enemyPieces = filterTeamPieces(enemyColor, allPieces);
@@ -128,27 +131,31 @@ function pawnMoves(pawn) {
   const HOME_ROW = pawn.color == "white" ? 1 : 6;
   const Y_DIRECTION = pawn.color == "white" ? 1 : -1;
   const ENEMY_INDICATOR = pawn.color == "white" ? "d" : "l";
-
-  if (
-    pawn.col > 0 &&
-    state[pawn.row + Y_DIRECTION][pawn.col - 1][0] == ENEMY_INDICATOR
-  ) {
-    pawn.moveset.push([pawn.row + Y_DIRECTION, pawn.col - 1]);
-  }
-  if (
-    pawn.col < SQUARES_PER_SIDE - 1 &&
-    state[pawn.row + Y_DIRECTION][pawn.col + 1][0] == ENEMY_INDICATOR
-  ) {
-    pawn.moveset.push([pawn.row + Y_DIRECTION, pawn.col + 1]);
-  }
-
-  if (state[pawn.row + Y_DIRECTION][pawn.col] == "e") {
-    pawn.moveset.push([pawn.row + Y_DIRECTION, pawn.col]);
+  const AT_FINAL_ROW =
+    (pawn.color == "white" && pawn.row == 7) ||
+    (pawn.color == "black" && pawn.row == 0);
+  if (!AT_FINAL_ROW) {
     if (
-      pawn.row == HOME_ROW &&
-      state[pawn.row + Y_DIRECTION + Y_DIRECTION][pawn.col] == "e"
+      pawn.col > 0 &&
+      state[pawn.row + Y_DIRECTION][pawn.col - 1][0] == ENEMY_INDICATOR
     ) {
-      pawn.moveset.push([pawn.row + Y_DIRECTION + Y_DIRECTION, pawn.col]);
+      pawn.moveset.push([pawn.row + Y_DIRECTION, pawn.col - 1]);
+    }
+    if (
+      pawn.col < SQUARES_PER_SIDE - 1 &&
+      state[pawn.row + Y_DIRECTION][pawn.col + 1][0] == ENEMY_INDICATOR
+    ) {
+      pawn.moveset.push([pawn.row + Y_DIRECTION, pawn.col + 1]);
+    }
+
+    if (state[pawn.row + Y_DIRECTION][pawn.col] == "e") {
+      pawn.moveset.push([pawn.row + Y_DIRECTION, pawn.col]);
+      if (
+        pawn.row == HOME_ROW &&
+        state[pawn.row + Y_DIRECTION + Y_DIRECTION][pawn.col] == "e"
+      ) {
+        pawn.moveset.push([pawn.row + Y_DIRECTION + Y_DIRECTION, pawn.col]);
+      }
     }
   }
 }
@@ -198,6 +205,7 @@ function filterTeamPieces(color, allPieces) {
 }
 
 function formatState(unformattedState) {
+  state.length = 0;
   for (let i = 0; i < SQUARES_PER_SIDE; i++) {
     const row = unformattedState.slice(
       i * SQUARES_PER_SIDE,

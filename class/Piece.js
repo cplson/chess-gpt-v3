@@ -4,6 +4,6 @@ export default class Piece {
     this.pieceImg = document.createElement("img");
     this.pieceImg.src = this.pieceUrl;
     this.pieceImg.alt = state[0] == "l" ? "white-piece" : "black-piece";
-    this.pieceImg.classList.add("piece");
+    this.pieceImg.classList.add("piece", state[0] == "l" ? "white" : "black");
   }
 }
