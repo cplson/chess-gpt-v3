@@ -21,10 +21,14 @@ router.get("/color/:color/isTurn/:isTurn", (req, res) => {
   const allPieces = formatPieces();
   const teamPieces = filterTeamPieces(teamColor, allPieces);
   const enemyPieces = filterTeamPieces(enemyColor, allPieces);
-  // console.log("teamPieces", teamPieces);
   getMoves(teamPieces);
+  getMoves(enemyPieces);
+  const teamRooks = teamPieces.filter((piece) => piece.pieceType == "r");
+  const king = teamPieces.filter((piece) => piece.pieceType == "k")[0];
+  teamRooks.forEach((rook) => {
+    checkForCastle(rook, king, enemyPieces);
+  });
   if (THIS_TEAMS_TURN) {
-    const king = teamPieces.filter((piece) => piece.pieceType == "k")[0];
     // console.log("king is:", king);
     const IS_CHECK = checkThreatState(king.row, king.col, enemyPieces);
     // console.log("is check: ", IS_CHECK);
@@ -33,24 +37,61 @@ router.get("/color/:color/isTurn/:isTurn", (req, res) => {
 });
 
 function checkThreatState(row, col, enemyPieces) {
-  let isCheck = false;
+  const TRUE_STATE = state[row][col];
+  const TEAM_PIECE_COLOR = enemyPieces[0].color == "white" ? "d" : "l";
+  state[row][col] = TEAM_PIECE_COLOR + "p";
   getMoves(enemyPieces);
+  let isCheck = false;
   const enemyQueen = enemyPieces.filter((piece) => piece.pieceType == "q")[0];
-  // For every enemy piece
-  // console.log('enemyQueen is: ', enemyQueen);
   enemyPieces.forEach((enemy) => {
     enemy.moveset.forEach((move) => {
       if (move[0] == row && move[1] == col) {
-        // console.log([move[0], row], [move[1], col]);
         isCheck = true;
       }
     });
   });
+  state[row][col] = TRUE_STATE;
+  console.log(state[row][col]);
   return isCheck;
-  // -> For Every move in moveset
-  // -> -> if a move matches the location in question, return true
-  // return false
 }
+
+function checkForCastle(rook, king, enemyPieces) {
+  const KING_STATE = state[king.row][king.col];
+  const ROOK_STATE = state[rook.row][rook.col];
+  const DIRECTION = rook.col == 0 ? -1 : 1;
+  const squares = [];
+  if (ROOK_STATE.length == 3 && KING_STATE.length == 3) {
+    if (!checkThreatState(king.row, king.col, enemyPieces)) {
+      let i = king.col + DIRECTION;
+      while (i != rook.col) {
+        squares.push([king.row, i]);
+        i = i + DIRECTION;
+      }
+      const OCCUPIED_SQUARES = squares.filter(
+        (square) => state[square[0]][square[1]] != "e"
+      );
+      if (OCCUPIED_SQUARES.length == 0) {
+        squares.length = 2;
+        const SAFE_SQUARES = squares.filter(
+          (square) => !checkThreatState(square[0], square[1], enemyPieces)
+        );
+        if (SAFE_SQUARES.length == 2) {
+          rook.moveset.push(rook.col == 0 ? "O-O-O" : "O-O");
+          console.log(rook.moveset);
+        }
+      }
+    }
+  }
+}
+
+// function kingSideLogic(rookRow, rookCol, enemyPieces){
+
+// }
+
+// function QueenSideLogic(rookRow, rookCol, enemyPieces){
+
+// }
+
 function nonExtenderMoves(piece) {
   const ENEMY_INDICATOR = piece.color == "white" ? "d" : "l";
   let set;
@@ -208,6 +249,7 @@ function determineMoveType(piece) {
 
 function getMoves(pieces) {
   for (let i = 0; i < pieces.length; i++) {
+    pieces[i].moveset.length = 0;
     determineMoveType(pieces[i]);
   }
 }

@@ -3,14 +3,14 @@ const router = express.Router();
 router.use(express.json());
 const gameMoves = [];
 const gameState = [
-  ["lrq", "e", "lb", "lq", "lk", "lb", "ln", "lrk"],
-  ["e", "dp", "lp", "lp", "e", "lp", "lp", "lp"],
+  ["lrq", "e", "e", "e", "lku", "e", "e", "lrk"],
+  ["e", "e", "lp", "lp", "lb", "lp", "lp", "lp"],
   ["e", "e", "e", "e", "e", "dp", "e", "dp"],
-  ["e", "e", "e", "e", "e", "e", "e", "e"],
+  ["e", "e", "lq", "e", "e", "e", "e", "e"],
   ["e", "e", "e", "e", "e", "e", "e", "e"],
   ["lp", "e", "e", "e", "e", "e", "e", "e"],
   ["lp", "dp", "dp", "dq", "e", "e", "dp", "e"],
-  ["drq", "dn", "db", "e", "dk", "db", "dn", "drk"],
+  ["drq", "dn", "db", "e", "dku", "db", "dn", "drk"],
 ];
 // = [
 //   ["lr", "e", "lb", "e", "lk", "lb", "ln", "lr"],
@@ -32,10 +32,9 @@ router.post("/", async (req, res) => {
     const piece = req.body.piece;
     const TAKEN_PIECE = gameState[toSquare[0]][toSquare[1]];
 
-    //unmark rooks when moved
+    //unmark rooks and kings when moved
     if (gameState[piece.row][piece.col].length == 3) {
-      gameState[piece.row][piece.col] =
-        gameState[piece.row][piece.col][0] + "r";
+      gameState[piece.row][piece.col].length = 2;
     }
 
     gameState[toSquare[0]][toSquare[1]] =
@@ -50,7 +49,7 @@ router.post("/", async (req, res) => {
       moveOrder: moveOrder,
     });
     // console.log("gameMoves out:", gameMoves);
-    console.log(gameState);
+    // console.log(gameState);
     res.sendStatus(201);
   } catch (err) {
     res.send(err);
