@@ -3,14 +3,14 @@ const router = express.Router();
 router.use(express.json());
 const gameMoves = [];
 const gameState = [
-  ["lr", "e", "lb", "lq", "lk", "lb", "ln", "lr"],
-  ["e", "dp", "lp", "lp", "e", "lp", "lp", "lp"],
+  ["lr", "e", "lb", "e", "lk", "lb", "ln", "lr"],
+  ["e", "dp", "lp", "lq", "e", "lp", "lp", "lp"],
   ["e", "e", "e", "e", "e", "dp", "e", "dp"],
   ["e", "e", "e", "e", "e", "e", "e", "e"],
   ["e", "e", "e", "e", "e", "e", "e", "e"],
   ["lp", "e", "e", "e", "e", "e", "e", "e"],
-  ["lp", "dp", "dp", "dp", "dp", "e", "dp", "e"],
-  ["e", "dn", "db", "dq", "dk", "db", "dn", "dr"],
+  ["lp", "dp", "dp", "dq", "e", "e", "dp", "e"],
+  ["e", "dn", "db", "e", "dk", "db", "dn", "dr"],
 ];
 router.get("/", async (req, res) => {
   res.send({ gameState, gameMoves });
@@ -33,7 +33,7 @@ router.post("/", async (req, res) => {
       takenPiece: TAKEN_PIECE,
       moveOrder: moveOrder,
     });
-    console.log("gameMoves out:", gameMoves);
+    // console.log("gameMoves out:", gameMoves);
 
     res.sendStatus(201);
   } catch (err) {

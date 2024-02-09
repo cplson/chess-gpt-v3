@@ -182,7 +182,7 @@ async function transitionTurns() {
     team.toggleTurn();
     team.updatePieces(gameState, gameMoves);
   });
-  console.log("gameMoves after turn transition: ", gameMoves);
+  //   console.log("gameMoves after turn transition: ", gameMoves);
 }
 
 function setTeams() {

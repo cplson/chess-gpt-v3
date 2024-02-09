@@ -13,19 +13,45 @@ router.post("/updateState", (req, res) => {
   res.sendStatus(201);
 });
 
-router.get("/color/:color", (req, res) => {
-  const playerColor = req.params.color;
-  const enemyColor = playerColor == "white" ? "black" : "white";
+router.get("/color/:color/isTurn/:isTurn", (req, res) => {
+  const THIS_TEAMS_TURN = Boolean(req.params.isTurn == "true");
+  const teamColor = req.params.color;
+  const enemyColor = teamColor == "white" ? "black" : "white";
+  console.log("this teams turn is: ", THIS_TEAMS_TURN);
 
-  if (playerColor == "white") {
-  }
   const allPieces = formatPieces();
-  const teamPieces = filterTeamPieces(playerColor, allPieces);
+  const teamPieces = filterTeamPieces(teamColor, allPieces);
   const enemyPieces = filterTeamPieces(enemyColor, allPieces);
+  // console.log("teamPieces", teamPieces);
   getMoves(teamPieces);
+  if (THIS_TEAMS_TURN) {
+    const king = teamPieces.filter((piece) => piece.pieceType == "k")[0];
+    console.log("king is:", king);
+    const IS_CHECK = checkThreatState(king.row, king.col, enemyPieces);
+    console.log("is check: ", IS_CHECK);
+  }
   res.send(teamPieces);
 });
 
+function checkThreatState(row, col, enemyPieces) {
+  let isCheck = false;
+  getMoves(enemyPieces);
+  const enemyQueen = enemyPieces.filter((piece) => piece.pieceType == "q")[0];
+  // For every enemy piece
+  // console.log('enemyQueen is: ', enemyQueen);
+  enemyPieces.forEach((enemy) => {
+    enemy.moveset.forEach((move) => {
+      if (move[0] == row && move[1] == col) {
+        console.log([move[0], row], [move[1], col]);
+        isCheck = true;
+      }
+    });
+  });
+  return isCheck;
+  // -> For Every move in moveset
+  // -> -> if a move matches the location in question, return true
+  // return false
+}
 function nonExtenderMoves(piece) {
   const ENEMY_INDICATOR = piece.color == "white" ? "d" : "l";
   let set;
