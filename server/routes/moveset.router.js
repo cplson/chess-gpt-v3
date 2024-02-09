@@ -17,7 +17,6 @@ router.get("/color/:color/isTurn/:isTurn", (req, res) => {
   const THIS_TEAMS_TURN = Boolean(req.params.isTurn == "true");
   const teamColor = req.params.color;
   const enemyColor = teamColor == "white" ? "black" : "white";
-  console.log("this teams turn is: ", THIS_TEAMS_TURN);
 
   const allPieces = formatPieces();
   const teamPieces = filterTeamPieces(teamColor, allPieces);
@@ -26,9 +25,9 @@ router.get("/color/:color/isTurn/:isTurn", (req, res) => {
   getMoves(teamPieces);
   if (THIS_TEAMS_TURN) {
     const king = teamPieces.filter((piece) => piece.pieceType == "k")[0];
-    console.log("king is:", king);
+    // console.log("king is:", king);
     const IS_CHECK = checkThreatState(king.row, king.col, enemyPieces);
-    console.log("is check: ", IS_CHECK);
+    // console.log("is check: ", IS_CHECK);
   }
   res.send(teamPieces);
 });
@@ -42,7 +41,7 @@ function checkThreatState(row, col, enemyPieces) {
   enemyPieces.forEach((enemy) => {
     enemy.moveset.forEach((move) => {
       if (move[0] == row && move[1] == col) {
-        console.log([move[0], row], [move[1], col]);
+        // console.log([move[0], row], [move[1], col]);
         isCheck = true;
       }
     });

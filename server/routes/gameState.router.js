@@ -3,25 +3,41 @@ const router = express.Router();
 router.use(express.json());
 const gameMoves = [];
 const gameState = [
-  ["lr", "e", "lb", "e", "lk", "lb", "ln", "lr"],
-  ["e", "dp", "lp", "lq", "e", "lp", "lp", "lp"],
+  ["lrq", "e", "lb", "lq", "lk", "lb", "ln", "lrk"],
+  ["e", "dp", "lp", "lp", "e", "lp", "lp", "lp"],
   ["e", "e", "e", "e", "e", "dp", "e", "dp"],
   ["e", "e", "e", "e", "e", "e", "e", "e"],
   ["e", "e", "e", "e", "e", "e", "e", "e"],
   ["lp", "e", "e", "e", "e", "e", "e", "e"],
   ["lp", "dp", "dp", "dq", "e", "e", "dp", "e"],
-  ["e", "dn", "db", "e", "dk", "db", "dn", "dr"],
+  ["drq", "dn", "db", "e", "dk", "db", "dn", "drk"],
 ];
+// = [
+//   ["lr", "e", "lb", "e", "lk", "lb", "ln", "lr"],
+//   ["e", "dp", "lp", "lq", "e", "lp", "lp", "lp"],
+//   ["e", "e", "e", "e", "e", "dp", "e", "dp"],
+//   ["e", "e", "e", "e", "e", "e", "e", "e"],
+//   ["e", "e", "e", "e", "e", "e", "e", "e"],
+//   ["lp", "e", "e", "e", "e", "e", "e", "e"],
+//   ["lp", "dp", "dp", "dq", "e", "e", "dp", "e"],
+//   ["e", "dn", "db", "e", "dk", "db", "dn", "dr"],
+// ];
 router.get("/", async (req, res) => {
   res.send({ gameState, gameMoves });
 });
 
 router.post("/", async (req, res) => {
   try {
-    // console.log("gamestate in:", gameState);
     const toSquare = [req.body.toX, req.body.toY];
     const piece = req.body.piece;
     const TAKEN_PIECE = gameState[toSquare[0]][toSquare[1]];
+
+    //unmark rooks when moved
+    if (gameState[piece.row][piece.col].length == 3) {
+      gameState[piece.row][piece.col] =
+        gameState[piece.row][piece.col][0] + "r";
+    }
+
     gameState[toSquare[0]][toSquare[1]] =
       piece.color == "white" ? "l" + piece.pieceType : "d" + piece.pieceType;
     gameState[piece.row][piece.col] = "e";
@@ -34,7 +50,7 @@ router.post("/", async (req, res) => {
       moveOrder: moveOrder,
     });
     // console.log("gameMoves out:", gameMoves);
-
+    console.log(gameState);
     res.sendStatus(201);
   } catch (err) {
     res.send(err);

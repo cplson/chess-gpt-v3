@@ -114,6 +114,7 @@ async function move(fromSquarePiece, toSquare, toSquareElement) {
     })
     .then((res) => {
       if (res.status == 201) {
+        console.log("eyy");
         renderMove(toSquareElement, toSquare, fromSquarePiece);
         transitionTurns();
       } else {
