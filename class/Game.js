@@ -38,7 +38,31 @@ export class Game {
     );
     castleBtns.forEach((btn) => {
       btn.addEventListener("click", () => {
-        console.log("clicked");
+        const teamColor = btn.classList.contains("white") ? "l" : "d";
+        const side = btn.classList.contains("queenside") ? "O-O-O" : "O-O";
+
+        axios
+          .post(`http://localhost:5000/api/gameState/castle`, {
+            color: teamColor,
+            side: side,
+          })
+          .then((res) => {
+            if (res.status == 201) {
+              renderCastleMove(teamColor, side);
+
+              const castleBtns = Array.from(
+                document.getElementsByClassName("castle-btn")
+              );
+              castleBtns.forEach((btn) => {
+                btn.style.opacity = 0;
+                btn.disabled = true;
+              });
+
+              transitionTurns();
+            } else {
+              console.log(res);
+            }
+          });
       });
     });
   }
@@ -48,6 +72,23 @@ export class Game {
   }
 }
 
+function renderCastleMove(color, side) {
+  const KING_COL = 4;
+  const ROOK_ROW = color == "l" ? 1 : 8;
+  const ROOK_COL = side == "O-O" ? 7 : 0;
+  const ROOK_TO_COL = ROOK_COL == 7 ? 5 : 3;
+  const KING_TO_COL = ROOK_COL == 7 ? 6 : 2;
+
+  const rookSquare = getSquareElement(ROOK_ROW, ROOK_COL);
+  const kingSquare = getSquareElement(ROOK_ROW, KING_COL);
+  const rookToSquare = getSquareElement(ROOK_ROW, ROOK_TO_COL);
+  const kingToSquare = getSquareElement(ROOK_ROW, KING_TO_COL);
+
+  rookToSquare.appendChild(rookSquare.children[0]);
+  kingToSquare.appendChild(kingSquare.children[0]);
+  rookSquare.innerHTML = "";
+  kingSquare.innerHTML = "";
+}
 export class Square {
   constructor(x, y, piece = "e") {
     this.element = document.createElement("div");
@@ -116,7 +157,7 @@ async function move(fromSquarePiece, toSquare, toSquareElement) {
     invertedRow = 0;
   }
 
-  const response = await axios
+  await axios
     .post("http://localhost:5000/api/gameState", {
       toX: toSquare.x - 1,
       toY: toSquare.y,
@@ -124,7 +165,6 @@ async function move(fromSquarePiece, toSquare, toSquareElement) {
     })
     .then((res) => {
       if (res.status == 201) {
-        console.log("eyy");
         renderMove(toSquareElement, toSquare, fromSquarePiece);
 
         const castleBtns = Array.from(
@@ -236,16 +276,6 @@ async function transitionTurns() {
     team.toggleTurn();
     team.updatePieces(gameState, gameMoves);
   });
-
-  //   checkForCastles();
-  //   console.log("gameMoves after turn transition: ", gameMoves);
-}
-
-function checkForCastles() {
-  const TEAMS_TURN = teams.filter((team) => team.isTurn)[0];
-  if (TEAMS_TURN == player) {
-    console.log("hell yea brother");
-  }
 }
 
 function setTeams() {

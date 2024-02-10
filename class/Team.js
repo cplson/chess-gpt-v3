@@ -13,7 +13,7 @@ class Team {
         moveHistory: moveHistory,
       })
       .then(async (res) => {
-        console.log(this.name, this.isTurn);
+        // console.log(this.name, this.isTurn);
         const response = await axios.get(
           `http://localhost:5000/api/moveset/color/${this.color}/isTurn/${this.isTurn}`
         );

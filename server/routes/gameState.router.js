@@ -6,11 +6,11 @@ const gameState = [
   ["lrq", "e", "e", "e", "lku", "e", "e", "lrk"],
   ["e", "e", "lp", "lp", "lb", "lp", "lp", "lp"],
   ["e", "e", "e", "e", "e", "dp", "e", "dp"],
-  ["e", "e", "lq", "e", "e", "e", "e", "e"],
+  ["e", "e", "e", "e", "e", "e", "e", "e"],
   ["e", "e", "e", "e", "e", "e", "e", "e"],
   ["lp", "e", "e", "e", "e", "e", "e", "e"],
   ["lp", "dp", "dp", "dq", "e", "e", "dp", "e"],
-  ["drq", "dn", "db", "e", "dku", "db", "dn", "drk"],
+  ["drq", "e", "e", "e", "dku", "e", "e", "drk"],
 ];
 // = [
 //   ["lr", "e", "lb", "e", "lk", "lb", "ln", "lr"],
@@ -26,6 +26,25 @@ router.get("/", async (req, res) => {
   res.send({ gameState, gameMoves });
 });
 
+router.post("/castle", async (req, res) => {
+  try {
+    const side = req.body.side;
+    const color = req.body.color;
+    const rookRow = color == "l" ? 0 : 7;
+    const rookCol = side == "O-O" ? 7 : 0;
+    const rookToCol = rookCol == 7 ? 5 : 3;
+    const kingToCol = rookCol == 7 ? 6 : 2;
+
+    gameState[rookRow][rookToCol] = color + "r";
+    gameState[rookRow][rookCol] = "e";
+    gameState[rookRow][kingToCol] = color + "k";
+    gameState[rookRow][4] = "e";
+    console.log(gameState);
+    res.sendStatus(201);
+  } catch (err) {
+    res.send(err);
+  }
+});
 router.post("/", async (req, res) => {
   try {
     const toSquare = [req.body.toX, req.body.toY];

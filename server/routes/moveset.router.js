@@ -76,7 +76,7 @@ function checkForCastle(rook, king, enemyPieces) {
         );
         if (SAFE_SQUARES.length == 2) {
           rook.moveset.push(rook.col == 0 ? "O-O-O" : "O-O");
-          console.log(rook.moveset);
+          // console.log(rook.moveset);
         }
       }
     }
