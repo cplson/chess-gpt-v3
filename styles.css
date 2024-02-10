@@ -4,11 +4,11 @@
   box-sizing: border-box;
   font-family: "Montserrat", sans-serif;
   font-weight: 400;
-  box-sizing: border-box;
 }
 
 body {
   background-color: #5555c1;
+  padding-top: 64px;
 }
 
 #chess-container {
@@ -18,14 +18,15 @@ body {
   margin: auto;
   display: grid;
   grid-template-columns: repeat(8, 1fr);
+  column-gap: 0px;
   width: 64vmin;
+  max-width: 640px;
+  justify-content: space-around;
 }
 
 .square {
-  width: 8vw;
   height: 8vw;
-  max-width: 72px;
-  max-height: 72px;
+  max-height: 64px;
   position: relative;
 }
 
@@ -60,6 +61,32 @@ body {
 .piece {
   padding: 6px;
   width: 100%;
+}
+
+.castle-btns-container {
+  width: 64vmin;
+  max-width: 720px;
+  margin: 8px auto;
+  display: flex;
+  justify-content: space-between;
+  /* background-color: #23022e; */
+}
+
+.castle-btn {
+  width: 48px;
+  padding: 10px;
+  border-radius: 24px;
+  border-style: none;
+  border: solid 2px #23022e;
+  opacity: 0;
+}
+
+.hidden {
+  opacity: 0;
+}
+
+.show {
+  opacity: 1;
 }
 
 #new-game-button {

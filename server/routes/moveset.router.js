@@ -51,7 +51,6 @@ function checkThreatState(row, col, enemyPieces) {
     });
   });
   state[row][col] = TRUE_STATE;
-  console.log(state[row][col]);
   return isCheck;
 }
 
@@ -83,14 +82,6 @@ function checkForCastle(rook, king, enemyPieces) {
     }
   }
 }
-
-// function kingSideLogic(rookRow, rookCol, enemyPieces){
-
-// }
-
-// function QueenSideLogic(rookRow, rookCol, enemyPieces){
-
-// }
 
 function nonExtenderMoves(piece) {
   const ENEMY_INDICATOR = piece.color == "white" ? "d" : "l";

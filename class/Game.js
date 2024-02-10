@@ -31,6 +31,16 @@ export class Game {
         this.board.appendChild(square.getElement());
       }
     }
+
+    // Initialize castleBtns
+    const castleBtns = Array.from(
+      document.getElementsByClassName("castle-btn")
+    );
+    castleBtns.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        console.log("clicked");
+      });
+    });
   }
 
   async getSquareAt(row, col) {
@@ -156,8 +166,45 @@ function highlightAllMoves(moves) {
       previouslyHighlighted[i].classList.remove("move-location");
     }
   }
-  moves.forEach((move) => {
+
+  const regularMoves = moves.filter((move) => typeof move != "string");
+  const castleMoves = moves.filter((move) => typeof move == "string");
+  //   console.log(regularMoves);
+  //   console.log(castleMoves);
+
+  const castleBtns = Array.from(document.getElementsByClassName("castle-btn"));
+  castleBtns.forEach((btn) => {
+    btn.style.opacity = 0;
+    btn.disabled = true;
+  });
+  regularMoves.forEach((move) => {
     highlightMove(move);
+  });
+
+  const teamsTurn = teams.filter((team) => team.isTurn)[0];
+  castleMoves.forEach((move) => {
+    const castleBtns = Array.from(
+      document.getElementsByClassName("castle-btn")
+    );
+    castleBtns.forEach((btn) => {
+      if (move === "O-O") {
+        if (
+          btn.classList.contains(`kingside`) &&
+          btn.classList.contains(`${teamsTurn.color}`)
+        ) {
+          btn.style.opacity = 1;
+          btn.disabled = false;
+        }
+      } else {
+        if (
+          btn.classList.contains(`queenside`) &&
+          btn.classList.contains(`${teamsTurn.color}`)
+        ) {
+          btn.style.opacity = 1;
+          btn.disabled = false;
+        }
+      }
+    });
   });
 }
 
@@ -183,7 +230,16 @@ async function transitionTurns() {
     team.toggleTurn();
     team.updatePieces(gameState, gameMoves);
   });
+
+  //   checkForCastles();
   //   console.log("gameMoves after turn transition: ", gameMoves);
+}
+
+function checkForCastles() {
+  const TEAMS_TURN = teams.filter((team) => team.isTurn)[0];
+  if (TEAMS_TURN == player) {
+    console.log("hell yea brother");
+  }
 }
 
 function setTeams() {
