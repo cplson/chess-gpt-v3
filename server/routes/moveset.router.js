@@ -24,34 +24,88 @@ router.get("/color/:color/isTurn/:isTurn", (req, res) => {
   getMoves(teamPieces);
   getMoves(enemyPieces);
   const teamRooks = teamPieces.filter((piece) => piece.pieceType == "r");
+  // const enemyRooks = enemyPieces.filter((piece) => piece.pieceType == "r");
   const king = teamPieces.filter((piece) => piece.pieceType == "k")[0];
+  // const enemyKing = enemyPieces.filter((piece) => piece.pieceType == "k")[0];
+
   teamRooks.forEach((rook) => {
     checkForCastle(rook, king, enemyPieces);
   });
+  // enemyRooks.forEach((rook) => {
+  //   checkForCastle(rook, enemyKing, teamPieces);
+  // });
+
   if (THIS_TEAMS_TURN) {
-    // console.log("king is:", king);
-    const IS_CHECK = checkThreatState(king.row, king.col, enemyPieces);
-    // console.log("is check: ", IS_CHECK);
+    const THREAT_STATE = checkThreatState(king.row, king.col, enemyPieces);
+    if (THREAT_STATE.isCheck) {
+      // check if checkmate
+      const IS_CHECKMATE = checkCheckmate(
+        king,
+        teamPieces,
+        enemyPieces,
+        THREAT_STATE.threateningPiece
+      );
+    }
   }
   res.send(teamPieces);
 });
+
+function checkCheckmate(king, teamPieces, enemyPieces, threateningPiece) {
+  let isCheckmate = true;
+  // get path to king
+  const pathToKing = getPathToKing(king, threateningPiece);
+  console.log(pathToKing);
+  // check if threateningPiece can be taken
+  // teamPieces.forEach(piece => {
+  //   piece.moveset.forEach(move => {
+  //     const CAN_TAKE_AGGRESSOR = move[0] == threateningPiece.row && move[1] == threateningPiece.col
+  //     if(CAN_TAKE_AGGRESSOR){
+  //       isCheckmate = false
+  //     }
+  //   })
+  // })
+}
+
+function getPathToKing(king, threateningPiece) {
+  // direction is based on aggressor to king
+  const path = [];
+  let xDirection = king.col - threateningPiece.col;
+  let yDirection = king.row - threateningPiece.row;
+  let distance = xDirection == 0 ? Math.abs(yDirection) : Math.abs(xDirection);
+  if (xDirection != 0) {
+    xDirection = xDirection / Math.abs(king.col - threateningPiece.col);
+  }
+  if (yDirection != 0) {
+    yDirection = yDirection / Math.abs(king.row - threateningPiece.row);
+  }
+  // console.log(yDirection, distance);
+
+  for (let i = 0; i < distance; i++) {
+    path.push([
+      threateningPiece.row + i * yDirection,
+      threateningPiece.col + i * xDirection,
+    ]);
+  }
+  return path;
+}
 
 function checkThreatState(row, col, enemyPieces) {
   const TRUE_STATE = state[row][col];
   const TEAM_PIECE_COLOR = enemyPieces[0].color == "white" ? "d" : "l";
   state[row][col] = TEAM_PIECE_COLOR + "p";
+  let threateningPiece;
   getMoves(enemyPieces);
   let isCheck = false;
-  const enemyQueen = enemyPieces.filter((piece) => piece.pieceType == "q")[0];
   enemyPieces.forEach((enemy) => {
     enemy.moveset.forEach((move) => {
       if (move[0] == row && move[1] == col) {
         isCheck = true;
+        threateningPiece = enemy;
       }
     });
   });
   state[row][col] = TRUE_STATE;
-  return isCheck;
+  return { isCheck, threateningPiece };
 }
 
 function checkForCastle(rook, king, enemyPieces) {
@@ -76,7 +130,6 @@ function checkForCastle(rook, king, enemyPieces) {
         );
         if (SAFE_SQUARES.length == 2) {
           rook.moveset.push(rook.col == 0 ? "O-O-O" : "O-O");
-          // console.log(rook.moveset);
         }
       }
     }
