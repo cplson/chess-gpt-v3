@@ -126,6 +126,15 @@ async function move(fromSquarePiece, toSquare, toSquareElement) {
       if (res.status == 201) {
         console.log("eyy");
         renderMove(toSquareElement, toSquare, fromSquarePiece);
+
+        const castleBtns = Array.from(
+          document.getElementsByClassName("castle-btn")
+        );
+        castleBtns.forEach((btn) => {
+          btn.style.opacity = 0;
+          btn.disabled = true;
+        });
+
         transitionTurns();
       } else {
         console.log(res);
