@@ -183,9 +183,6 @@ function highlightAllMoves(moves) {
 
   const teamsTurn = teams.filter((team) => team.isTurn)[0];
   castleMoves.forEach((move) => {
-    const castleBtns = Array.from(
-      document.getElementsByClassName("castle-btn")
-    );
     castleBtns.forEach((btn) => {
       if (move === "O-O") {
         if (
