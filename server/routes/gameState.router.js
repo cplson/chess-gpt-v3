@@ -3,14 +3,14 @@ const router = express.Router();
 router.use(express.json());
 const gameMoves = [];
 const gameState = [
-  ["lrq", "e", "e", "e", "lku", "e", "e", "lrk"],
+  ["e", "e", "e", "e", "lku", "e", "e", "e"],
   ["e", "e", "lp", "lp", "lb", "lp", "lp", "lp"],
   ["e", "e", "e", "e", "e", "dp", "e", "dp"],
-  ["e", "e", "e", "e", "e", "e", "e", "e"],
+  ["lr", "e", "e", "e", "e", "e", "e", "e"],
   ["e", "e", "e", "e", "e", "dk", "e", "e"],
-  ["lp", "e", "e", "lq", "e", "e", "e", "e"],
+  ["lp", "e", "lr", "lq", "e", "e", "e", "e"],
   ["lp", "e", "e", "e", "e", "e", "e", "e"],
-  ["drq", "e", "e", "e", "e", "e", "e", "drk"],
+  ["e", "e", "e", "dr", "e", "e", "e", "e"],
 ];
 // = [
 //   ["lr", "e", "lb", "e", "lk", "lb", "ln", "lr"],

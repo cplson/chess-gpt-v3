@@ -41,10 +41,11 @@ router.get("/color/:color/isTurn/:isTurn", (req, res) => {
       // check if checkmate
       const IS_CHECKMATE = checkCheckmate(
         king,
-        teamPieces,
+        teamPieces.filter((piece) => piece.pieceType != "k"),
         enemyPieces,
         THREAT_STATE.threateningPiece
       );
+      console.log("IS_CHECKMATE: ", IS_CHECKMATE);
     }
   }
   res.send(teamPieces);
@@ -54,20 +55,53 @@ function checkCheckmate(king, teamPieces, enemyPieces, threateningPiece) {
   let isCheckmate = true;
   // get path to king
   const pathToKing = getPathToKing(king, threateningPiece);
-  console.log(pathToKing);
   // check if threateningPiece can be taken
-  // teamPieces.forEach(piece => {
-  //   piece.moveset.forEach(move => {
-  //     const CAN_TAKE_AGGRESSOR = move[0] == threateningPiece.row && move[1] == threateningPiece.col
-  //     if(CAN_TAKE_AGGRESSOR){
-  //       isCheckmate = false
-  //     }
-  //   })
-  // })
+  // or if piece can intercept the path to the king
+  teamPieces.forEach((piece) => {
+    const movesToKeep = [];
+    if (piece.pieceType == "r") {
+    }
+    piece.moveset.forEach((move, moveIndex) => {
+      pathToKing.forEach((square) => {
+        if (move[0] == square[0] && move[1] == square[1]) {
+          movesToKeep.push([move[0], move[1]]);
+          isCheckmate = false;
+        }
+      });
+    });
+    piece.moveset.length = 0;
+    movesToKeep.forEach((move) => {
+      piece.moveset.push(move);
+    });
+  });
+
+  let indicesToRemove = [];
+  for (let i = king.moveset.length - 1; i >= 0; i--) {
+    enemyPieces.forEach((piece) => {
+      piece.moveset.forEach((enemyMove) => {
+        if (
+          king.moveset[i][0] === enemyMove[0] &&
+          king.moveset[i][1] === enemyMove[1]
+        ) {
+          indicesToRemove.push(i);
+        }
+      });
+    });
+  }
+
+  indicesToRemove.forEach((index) => {
+    king.moveset.splice(index, 1);
+  });
+
+  return isCheckmate;
 }
 
 function getPathToKing(king, threateningPiece) {
   // direction is based on aggressor to king
+  const THREAT_IS_EXTENDER =
+    threateningPiece.pieceType == "r" ||
+    threateningPiece.pieceType == "b" ||
+    threateningPiece.pieceType == "q";
   const path = [];
   let xDirection = king.col - threateningPiece.col;
   let yDirection = king.row - threateningPiece.row;
@@ -78,7 +112,6 @@ function getPathToKing(king, threateningPiece) {
   if (yDirection != 0) {
     yDirection = yDirection / Math.abs(king.row - threateningPiece.row);
   }
-  // console.log(yDirection, distance);
 
   for (let i = 0; i < distance; i++) {
     path.push([
@@ -86,6 +119,25 @@ function getPathToKing(king, threateningPiece) {
       threateningPiece.col + i * xDirection,
     ]);
   }
+
+  let squareOppKing;
+
+  // if the threatening Piece is an extender there needs to be a way
+  // to check the square on the opposing side of the king when we check
+  // enemy moves against the kings moveset, because the king should not be
+  // able to move to that square. We don't want to push
+  if (THREAT_IS_EXTENDER) {
+    squareOppKing = [
+      threateningPiece.row + (distance + 1) * yDirection,
+      threateningPiece.col + (distance + 1) * xDirection,
+    ];
+    king.moveset.forEach((move, moveIndex) => {
+      if (move[0] == squareOppKing[0] && move[1] == squareOppKing[1]) {
+        king.moveset.splice(moveIndex, 1);
+      }
+    });
+  }
+  console.log(path, squareOppKing);
   return path;
 }
 
