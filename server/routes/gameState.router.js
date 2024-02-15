@@ -66,7 +66,7 @@ router.post("/", async (req, res) => {
       takenPiece = gameState[piece.row][toSquare[1]];
       gameState[piece.row][toSquare[1]] = "e";
     }
-    console.log(gameMoves)
+    console.log(gameMoves);
     gameState[toSquare[0]][toSquare[1]] =
       piece.color == "white" ? "l" + piece.pieceType : "d" + piece.pieceType;
     gameState[piece.row][piece.col] = "e";
@@ -84,6 +84,18 @@ router.post("/", async (req, res) => {
   } catch (err) {
     res.send(err);
   }
+});
+
+router.post("/promote", (req, res) => {
+  const row = req.body.row;
+  const col = req.body.col;
+  console.log(req.body);
+  const color = row == 7 ? "l" : "d";
+
+  gameState[row][col] = color + "q";
+  console.log(gameState);
+
+  res.sendStatus(201);
 });
 
 module.exports = router;

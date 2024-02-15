@@ -183,6 +183,7 @@ async function move(fromSquarePiece, toSquare, toSquareElement) {
 
 function renderMove(toSquareElement, toSquare, fromSquarePiece) {
   //   console.log(fromSquarePiece);
+
   // check if en passant
   if (
     fromSquarePiece.pieceType == "p" &&
@@ -214,6 +215,24 @@ function renderMove(toSquareElement, toSquare, fromSquarePiece) {
   // and add to the element that the piece moved too
   fromSquareElement.removeChild(pieceImg);
   toSquare.element.appendChild(pieceImg);
+  //check for pawn promo
+  if (
+    fromSquarePiece.pieceType == "p" &&
+    (toSquare.x == 8 || toSquare.x == 1)
+  ) {
+    axios.post("http://localhost:5000/api/gameState/promote", {
+      row: toSquare.x - 1,
+      col: toSquare.y,
+    });
+    fromSquarePiece.pieceType = "q";
+    console.log((fromSquarePiece.color == "white" ? "l" : "d") + "q");
+    const pieceImg = new Piece(
+      (fromSquarePiece.color == "white" ? "l" : "d") + "q"
+    );
+    toSquareElement.innerHTML = "";
+    console.log(pieceImg.pieceImg);
+    toSquareElement.appendChild(pieceImg.pieceImg);
+  }
 }
 
 function highlightMove(move) {
