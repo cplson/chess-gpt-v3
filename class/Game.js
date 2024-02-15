@@ -174,7 +174,6 @@ async function move(fromSquarePiece, toSquare, toSquareElement) {
           btn.style.opacity = 0;
           btn.disabled = true;
         });
-
         transitionTurns();
       } else {
         console.log(res);
@@ -183,6 +182,24 @@ async function move(fromSquarePiece, toSquare, toSquareElement) {
 }
 
 function renderMove(toSquareElement, toSquare, fromSquarePiece) {
+  //   console.log(fromSquarePiece);
+  // check if en passant
+  if (
+    fromSquarePiece.pieceType == "p" &&
+    toSquare.y != fromSquarePiece.col &&
+    toSquareElement.children.length == 0
+  ) {
+    console.log("en passant");
+    // get the removed piece square element
+    const Y_DIRECTION = fromSquarePiece.color == "white" ? -1 : 1;
+    const removedPawnElement = getSquareElement(
+      fromSquarePiece.row + Y_DIRECTION,
+      toSquare.y
+    );
+    removedPawnElement.innerHTML = "";
+
+    // removedPawnElement.removeChild(removedPawnElement.children[0]);
+  }
   // get the image of the piece thats being moved
   const fromSquareElement = getSquareElement(
     fromSquarePiece.row + 1,

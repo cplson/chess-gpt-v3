@@ -9,7 +9,10 @@ const moveHistory = [];
 router.post("/updateState", (req, res) => {
   const unformattedState = req.body.gameState;
   formatState(unformattedState);
-  moveHistory.push(req.body.moveHistory[req.body.moveHistory.length - 1]);
+
+  if (req.body.moveHistory.length > moveHistory.length) {
+    moveHistory.push(req.body.moveHistory[req.body.moveHistory.length - 1]);
+  }
   res.sendStatus(201);
 });
 
@@ -311,8 +314,10 @@ function isMoveValid(ROW, COL, ENEMY_INDICATOR) {
 
 function pawnMoves(pawn) {
   const HOME_ROW = pawn.color == "white" ? 1 : 6;
+  const ENEMY_HOME_ROW = pawn.color == "white" ? 6 : 1;
   const Y_DIRECTION = pawn.color == "white" ? 1 : -1;
   const ENEMY_INDICATOR = pawn.color == "white" ? "d" : "l";
+  const ROW_FOR_EN_PASSANT = HOME_ROW == 1 ? 4 : 3;
   const AT_FINAL_ROW =
     (pawn.color == "white" && pawn.row == 7) ||
     (pawn.color == "black" && pawn.row == 0);
@@ -339,6 +344,31 @@ function pawnMoves(pawn) {
         pawn.moveset.push([pawn.row + Y_DIRECTION + Y_DIRECTION, pawn.col]);
       }
     }
+    if (pawn.row == ROW_FOR_EN_PASSANT) {
+      console.log("moveHistory is: ", moveHistory);
+      // console.log("pawn is: ", pawn);
+
+      // CHECK THE LAST INDEX OF THE MOVE HISTORY
+      if (moveHistory.length > 0) {
+        const LAST_MOVE = moveHistory[moveHistory.length - 1];
+        // TO SEE IF PAWN WAS THE LAST PIECE TO MOVE.
+        // IF IT WAS LAST AND IT MOVED TWO SQUARES FORWARD
+        // CHECK IF THAT PAWN IS ADJACENT TO THIS PAWN
+        //  IF SO, ADD THE EN PASSANT TO THE MOVESET.
+        // NOTE: REMOVING OPPONENT WILL BE HANDLED IN THE GAMESTATE ROUTER
+        if (
+          LAST_MOVE.piece.pieceType == "p" &&
+          LAST_MOVE.from[0] == ENEMY_HOME_ROW &&
+          LAST_MOVE.to[0] == pawn.row &&
+          Math.abs(LAST_MOVE.to[1] - pawn.col == 1)
+        ) {
+          pawn.moveset.push([pawn.row + Y_DIRECTION, LAST_MOVE.to[1]]);
+        }
+      }
+    }
+  }
+  // WILL BE USED FOR PAWN PROMOTION
+  else {
   }
 }
 
