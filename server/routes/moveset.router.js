@@ -75,23 +75,38 @@ function checkCheckmate(king, teamPieces, enemyPieces, threateningPiece) {
     });
   });
 
-  let indicesToRemove = [];
-  for (let i = king.moveset.length - 1; i >= 0; i--) {
+  // CHECK EVERY ENEMY MOVE TO SEE IF ITS IN THE KINGS MOVESET
+  // IF ITS IN THE KINGS MOVESET (ALSO KEEPING IN MIND PAWN LOGIC)
+  // FILTER THAT MOVE OUT OF THE NEW KING MOVESET
+
+  const newKingMoves = king.moveset.filter((kingMove) => {
+    let safeMove = true;
+
     enemyPieces.forEach((piece) => {
       piece.moveset.forEach((enemyMove) => {
-        if (
-          king.moveset[i][0] === enemyMove[0] &&
-          king.moveset[i][1] === enemyMove[1]
-        ) {
-          indicesToRemove.push(i);
+        if (enemyMove.every((value, index) => value === kingMove[index])) {
+          if (
+            piece.pieceType != "p" ||
+            (piece.pieceType == "p" && piece.col != kingMove[1])
+          ) {
+            if (enemyMove[0] == 3 && enemyMove[1] == 6) {
+              console.log(piece);
+            }
+            safeMove = false;
+          }
         }
       });
     });
-  }
-
-  indicesToRemove.forEach((index) => {
-    king.moveset.splice(index, 1);
+    return safeMove;
   });
+  king.moveset.length = 0;
+  newKingMoves.forEach((move) => {
+    king.moveset.push(move);
+  });
+
+  if (king.moveset.length > 0) {
+    isCheckmate = false;
+  }
 
   return isCheckmate;
 }
@@ -124,8 +139,7 @@ function getPathToKing(king, threateningPiece) {
 
   // if the threatening Piece is an extender there needs to be a way
   // to check the square on the opposing side of the king when we check
-  // enemy moves against the kings moveset, because the king should not be
-  // able to move to that square. We don't want to push
+  // enemy moves against the kings moveset.
   if (THREAT_IS_EXTENDER) {
     squareOppKing = [
       threateningPiece.row + (distance + 1) * yDirection,
@@ -137,7 +151,6 @@ function getPathToKing(king, threateningPiece) {
       }
     });
   }
-  console.log(path, squareOppKing);
   return path;
 }
 
