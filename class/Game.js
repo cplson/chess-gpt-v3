@@ -189,13 +189,13 @@ function renderMove(toSquareElement, toSquare, fromSquarePiece) {
     toSquare.y != fromSquarePiece.col &&
     toSquareElement.children.length == 0
   ) {
-    console.log("en passant");
+    console.log(fromSquarePiece);
     // get the removed piece square element
-    const Y_DIRECTION = fromSquarePiece.color == "white" ? -1 : 1;
     const removedPawnElement = getSquareElement(
-      fromSquarePiece.row + Y_DIRECTION,
+      fromSquarePiece.row + 1,
       toSquare.y
     );
+    console.log(removedPawnElement);
     removedPawnElement.innerHTML = "";
 
     // removedPawnElement.removeChild(removedPawnElement.children[0]);

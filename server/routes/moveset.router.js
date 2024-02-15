@@ -345,7 +345,6 @@ function pawnMoves(pawn) {
       }
     }
     if (pawn.row == ROW_FOR_EN_PASSANT) {
-      console.log("moveHistory is: ", moveHistory);
       // console.log("pawn is: ", pawn);
 
       // CHECK THE LAST INDEX OF THE MOVE HISTORY
