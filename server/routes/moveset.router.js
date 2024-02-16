@@ -182,7 +182,8 @@ function checkForCastle(rook, king, enemyPieces) {
   const DIRECTION = rook.col == 0 ? -1 : 1;
   const squares = [];
   if (ROOK_STATE.length == 3 && KING_STATE.length == 3) {
-    if (!checkThreatState(king.row, king.col, enemyPieces)) {
+    if (!checkThreatState(king.row, king.col, enemyPieces).isCheck) {
+      console.log("inside checkForCastle()");
       let i = king.col + DIRECTION;
       while (i != rook.col) {
         squares.push([king.row, i]);
@@ -194,7 +195,7 @@ function checkForCastle(rook, king, enemyPieces) {
       if (OCCUPIED_SQUARES.length == 0) {
         squares.length = 2;
         const SAFE_SQUARES = squares.filter(
-          (square) => !checkThreatState(square[0], square[1], enemyPieces)
+          (square) => !checkThreatState(square[0], square[1], enemyPieces).isCheck
         );
         if (SAFE_SQUARES.length == 2) {
           rook.moveset.push(rook.col == 0 ? "O-O-O" : "O-O");

@@ -46,10 +46,13 @@ export class Game {
             color: teamColor,
             side: side,
           })
-          .then((res) => {
+          .then(async (res) => {
             if (res.status == 201) {
-              renderCastleMove(teamColor, side);
-
+              //   renderCastleMove(teamColor, side);
+              state = await getState();
+              gameState = state.gameState;
+              gameMoves = state.gameMoves;
+              renderMove();
               const castleBtns = Array.from(
                 document.getElementsByClassName("castle-btn")
               );
@@ -72,23 +75,6 @@ export class Game {
   }
 }
 
-function renderCastleMove(color, side) {
-  const KING_COL = 4;
-  const ROOK_ROW = color == "l" ? 1 : 8;
-  const ROOK_COL = side == "O-O" ? 7 : 0;
-  const ROOK_TO_COL = ROOK_COL == 7 ? 5 : 3;
-  const KING_TO_COL = ROOK_COL == 7 ? 6 : 2;
-
-  const rookSquare = getSquareElement(ROOK_ROW, ROOK_COL);
-  const kingSquare = getSquareElement(ROOK_ROW, KING_COL);
-  const rookToSquare = getSquareElement(ROOK_ROW, ROOK_TO_COL);
-  const kingToSquare = getSquareElement(ROOK_ROW, KING_TO_COL);
-
-  rookToSquare.appendChild(rookSquare.children[0]);
-  kingToSquare.appendChild(kingSquare.children[0]);
-  rookSquare.innerHTML = "";
-  kingSquare.innerHTML = "";
-}
 export class Square {
   constructor(x, y, piece = "e") {
     this.element = document.createElement("div");
@@ -163,8 +149,11 @@ async function move(fromSquarePiece, toSquare, toSquareElement) {
       toY: toSquare.y,
       piece: fromSquarePiece,
     })
-    .then((res) => {
+    .then(async (res) => {
       if (res.status == 201) {
+        state = await getState();
+        gameState = state.gameState;
+        gameMoves = state.gameMoves;
         renderMove(toSquareElement, toSquare, fromSquarePiece);
 
         const castleBtns = Array.from(
@@ -182,56 +171,39 @@ async function move(fromSquarePiece, toSquare, toSquareElement) {
 }
 
 function renderMove(toSquareElement, toSquare, fromSquarePiece) {
-  //   console.log(fromSquarePiece);
-
-  // check if en passant
-  if (
-    fromSquarePiece.pieceType == "p" &&
-    toSquare.y != fromSquarePiece.col &&
-    toSquareElement.children.length == 0
-  ) {
-    console.log(fromSquarePiece);
-    // get the removed piece square element
-    const removedPawnElement = getSquareElement(
-      fromSquarePiece.row + 1,
-      toSquare.y
-    );
-    console.log(removedPawnElement);
-    removedPawnElement.innerHTML = "";
-
-    // removedPawnElement.removeChild(removedPawnElement.children[0]);
+  let k = 0;
+  for (let i = SQUARES_PER_SIDE; i > 0; i--) {
+    for (let j = 0; j < SQUARES_PER_SIDE; j++) {
+      const updatedSquareState = gameState[i - 1][j];
+      // console.log(squares[k * 8 + j].element)
+      squares[k * 8 + j].element.textContent = "";
+      if (updatedSquareState != "e") {
+        const pieceImg = new Piece(updatedSquareState);
+        squares[k * 8 + j].element.appendChild(pieceImg.pieceImg);
+      }
+    }
+    k++;
   }
-  // get the image of the piece thats being moved
-  const fromSquareElement = getSquareElement(
-    fromSquarePiece.row + 1,
-    fromSquarePiece.col
-  );
 
-  const pieceImg = fromSquareElement.children[0];
-  if (toSquareElement.children[0]) {
-    toSquareElement.removeChild(toSquareElement.children[0]);
-  }
-  // remove piece from square that the piece came from
-  // and add to the element that the piece moved too
-  fromSquareElement.removeChild(pieceImg);
-  toSquare.element.appendChild(pieceImg);
   //check for pawn promo
-  if (
-    fromSquarePiece.pieceType == "p" &&
-    (toSquare.x == 8 || toSquare.x == 1)
-  ) {
-    axios.post("http://localhost:5000/api/gameState/promote", {
-      row: toSquare.x - 1,
-      col: toSquare.y,
-    });
-    fromSquarePiece.pieceType = "q";
-    console.log((fromSquarePiece.color == "white" ? "l" : "d") + "q");
-    const pieceImg = new Piece(
-      (fromSquarePiece.color == "white" ? "l" : "d") + "q"
-    );
-    toSquareElement.innerHTML = "";
-    console.log(pieceImg.pieceImg);
-    toSquareElement.appendChild(pieceImg.pieceImg);
+  if (fromSquarePiece) {
+    if (
+      fromSquarePiece.pieceType == "p" &&
+      (toSquare.x == 8 || toSquare.x == 1)
+    ) {
+      axios.post("http://localhost:5000/api/gameState/promote", {
+        row: toSquare.x - 1,
+        col: toSquare.y,
+      });
+      fromSquarePiece.pieceType = "q";
+      console.log((fromSquarePiece.color == "white" ? "l" : "d") + "q");
+      const pieceImg = new Piece(
+        (fromSquarePiece.color == "white" ? "l" : "d") + "q"
+      );
+      toSquareElement.innerHTML = "";
+      console.log(pieceImg.pieceImg);
+      toSquareElement.appendChild(pieceImg.pieceImg);
+    }
   }
 }
 
@@ -305,9 +277,7 @@ async function transitionTurns() {
   for (let i = highlightedSquares.length - 1; i >= 0; i--) {
     highlightedSquares[i].classList.remove("move-location");
   }
-  state = await getState();
-  gameState = state.gameState;
-  gameMoves = state.gameMoves;
+
   teams.forEach((team) => {
     team.toggleTurn();
     team.updatePieces(gameState, gameMoves);

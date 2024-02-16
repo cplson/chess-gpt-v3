@@ -3,26 +3,26 @@ const router = express.Router();
 router.use(express.json());
 const gameMoves = [];
 const gameState =
-  // = [
-  //   ["e", "e", "e", "e", "lku", "e", "e", "e"],
-  //   ["e", "e", "lp", "lp", "e", "lp", "lp", "lp"],
-  //   ["e", "e", "e", "e", "e", "e", "e", "dp"],
-  //   ["lr", "e", "e", "e", "e", "dp", "e", "e"],
-  //   ["e", "e", "e", "e", "e", "e", "e", "e"],
-  //   ["lp", "e", "lr", "lq", "e", "e", "e", "e"],
-  //   ["lp", "e", "e", "e", "e", "e", "e", "e"],
-  //   ["dr", "e", "e", "e", "e", "e", "e", "dk"],
-  // ];
-  [
-    ["lr", "e", "lb", "e", "lk", "lb", "ln", "lr"],
-    ["e", "dp", "lp", "lq", "e", "lp", "lp", "lp"],
+ [
+    ["lrq", "e", "e", "e", "lku", "e", "e", "e"],
+    ["e", "e", "lp", "lp", "e", "lp", "lp", "lp"],
     ["e", "e", "e", "e", "e", "e", "e", "dp"],
-    ["e", "e", "e", "e", "e", "dp", "e", "e"],
-    ["lp", "e", "e", "e", "e", "e", "e", "e"],
+    ["lr", "e", "e", "e", "e", "dp", "e", "e"],
     ["e", "e", "e", "e", "e", "e", "e", "e"],
-    ["lp", "dp", "dp", "dq", "e", "e", "dp", "e"],
-    ["e", "dn", "db", "e", "dk", "db", "dn", "dr"],
+    ["lp", "e", "lr", "lq", "e", "e", "e", "e"],
+    ["lp", "e", "e", "e", "e", "e", "e", "e"],
+    ["dr", "e", "e", "e", "e", "e", "e", "dk"],
   ];
+  // [
+  //   ["lr", "e", "lb", "e", "lk", "lb", "ln", "lr"],
+  //   ["e", "dp", "lp", "lq", "e", "lp", "lp", "lp"],
+  //   ["e", "e", "e", "e", "e", "e", "e", "dp"],
+  //   ["e", "e", "e", "e", "e", "dp", "e", "e"],
+  //   ["lp", "e", "e", "e", "e", "e", "e", "e"],
+  //   ["e", "e", "e", "e", "e", "e", "e", "e"],
+  //   ["lp", "dp", "dp", "dq", "e", "e", "dp", "e"],
+  //   ["e", "dn", "db", "e", "dk", "db", "dn", "dr"],
+  // ];
 router.get("/", async (req, res) => {
   res.send({ gameState, gameMoves });
 });
@@ -41,6 +41,13 @@ router.post("/castle", async (req, res) => {
     gameState[rookRow][kingToCol] = color + "k";
     gameState[rookRow][4] = "e";
     console.log(gameState);
+    let moveOrder = gameMoves.length;
+    gameMoves.push({
+      piece: side,
+      color: color,
+      takenPiece: 'e',
+      moveOrder: moveOrder,
+    });
     res.sendStatus(201);
   } catch (err) {
     res.send(err);
