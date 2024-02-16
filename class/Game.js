@@ -68,6 +68,7 @@ export class Game {
           });
       });
     });
+    initPromptGpt();
   }
 
   async getSquareAt(row, col) {
@@ -297,4 +298,15 @@ function getSquareElement(row, col) {
   const COLUMN = String(col).charCodeAt(0);
   const COLUMN_LETTER = String.fromCharCode(COLUMN + 17);
   return document.getElementsByClassName(`${ROW} ${COLUMN_LETTER}`)[0];
+}
+
+async function initPromptGpt() {
+  const promptBtn = document.getElementById("new-game-btn");
+  promptBtn.addEventListener("click", async () => {
+    const promptStatus = await axios.post("http://localhost:5000/api/chat", {
+      message: "hey baby",
+    });
+    // const response = await axios.get('')
+    console.log("promptStatus: ", promptStatus);
+  });
 }
