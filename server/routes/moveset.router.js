@@ -183,7 +183,6 @@ function checkForCastle(rook, king, enemyPieces) {
   const squares = [];
   if (ROOK_STATE.length == 3 && KING_STATE.length == 3) {
     if (!checkThreatState(king.row, king.col, enemyPieces).isCheck) {
-      console.log("inside checkForCastle()");
       let i = king.col + DIRECTION;
       while (i != rook.col) {
         squares.push([king.row, i]);
