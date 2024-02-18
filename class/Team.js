@@ -7,7 +7,7 @@ class Team {
   }
   async updatePieces(state, moveHistory) {
     // console.log("updatePieces() state: ", moveHistory);
-    axios
+    await axios
       .post("http://localhost:5000/api/moveset/updateState", {
         gameState: state,
         moveHistory: moveHistory,
@@ -20,10 +20,13 @@ class Team {
         this.pieces = response.data;
       });
 
-    // console.log(this.pieces);
   }
   toggleTurn() {
     this.isTurn = !this.isTurn;
+  }
+
+  getPieces() {
+    return this.pieces
   }
 }
 

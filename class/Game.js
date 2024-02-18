@@ -279,10 +279,35 @@ async function transitionTurns() {
     highlightedSquares[i].classList.remove("move-location");
   }
 
-  teams.forEach((team) => {
-    team.toggleTurn();
-    team.updatePieces(gameState, gameMoves);
-  });
+  //   teams.forEach(async (team) => {
+  //     team.toggleTurn();
+  //     await team.updatePieces(gameState, gameMoves);
+  //   });
+
+  await Promise.all(
+    teams.map(async (team) => {
+      team.toggleTurn();
+      await team.updatePieces(gameState, gameMoves);
+    })
+  );
+
+  //   if chat gpts turn
+  if (teams[1].isTurn) {
+    /*
+       -> call chat api
+       -> update the gameState
+       -> get the gameState
+       -> render move
+       -> transition turns
+      */
+    const prompt = await axios.post("http://localhost:5000/api/chat", {
+      pieces: teams[1].pieces,
+      state: gameState,
+    });
+    if (prompt.status == 201) {
+      console.log("shiii");
+    }
+  }
 }
 
 function setTeams() {
