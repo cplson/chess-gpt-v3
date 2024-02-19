@@ -272,7 +272,9 @@ async function transitionTurns() {
   selectedPiece = {};
 
   const targetedSquares = document.getElementsByClassName("targeted-square");
-  targetedSquares[0].classList.remove("targeted-square");
+  if(targetedSquares.length > 0){
+      targetedSquares[0].classList.remove("targeted-square");
+  }
 
   const highlightedSquares = document.getElementsByClassName("move-location");
   for (let i = highlightedSquares.length - 1; i >= 0; i--) {
@@ -308,7 +310,21 @@ async function transitionTurns() {
       try {
         const response = await axios.get("http://localhost:5000/api/chat");
         const aiMove = response.data;
-        console.log("aiMove is: ", aiMove);
+        await axios
+          .post("http://localhost:5000/api/gameState", {
+            toX: aiMove.toX,
+            toY: aiMove.toY,
+            piece: aiMove.aiPiece,
+          })
+          .then(async (res) => {
+            state = await getState();
+            gameState = state.gameState;
+            gameMoves = state.gameMoves;
+          });
+          const toSquareElement = getSquareElement(aiMove.toX + 1, aiMove.toY)
+          console.log(toSquareElement)
+        renderMove(toSquareElement, [aiMove.toX, aiMove.toY], aiMove.aiPiece)
+        transitionTurns()
       } catch (err) {
         console.log(err);
       }

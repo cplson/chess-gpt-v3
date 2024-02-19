@@ -3,16 +3,16 @@ const router = express.Router();
 router.use(express.json());
 const gameMoves = [];
 const gameState =
-//  [
-//     ["lrq", "e", "e", "e", "lku", "e", "e", "e"],
-//     ["e", "e", "lp", "lp", "e", "lp", "lp", "lp"],
-//     ["e", "e", "e", "e", "e", "e", "e", "dp"],
-//     ["lr", "e", "e", "e", "e", "dp", "e", "e"],
-//     ["e", "e", "e", "e", "e", "e", "e", "e"],
-//     ["lp", "e", "lr", "lq", "e", "e", "e", "e"],
-//     ["lp", "e", "e", "e", "e", "e", "e", "e"],
-//     ["dr", "e", "e", "e", "e", "e", "e", "dk"],
-//   ];
+  //  [
+  //     ["lrq", "e", "e", "e", "lku", "e", "e", "e"],
+  //     ["e", "e", "lp", "lp", "e", "lp", "lp", "lp"],
+  //     ["e", "e", "e", "e", "e", "e", "e", "dp"],
+  //     ["lr", "e", "e", "e", "e", "dp", "e", "e"],
+  //     ["e", "e", "e", "e", "e", "e", "e", "e"],
+  //     ["lp", "e", "lr", "lq", "e", "e", "e", "e"],
+  //     ["lp", "e", "e", "e", "e", "e", "e", "e"],
+  //     ["dr", "e", "e", "e", "e", "e", "e", "dk"],
+  //   ];
   [
     ["lrq", "ln", "lb", "lq", "lku", "lb", "ln", "lrk"],
     ["lp", "lp", "lp", "lp", "lp", "lp", "lp", "lp"],
@@ -45,7 +45,7 @@ router.post("/castle", async (req, res) => {
     gameMoves.push({
       piece: side,
       color: color,
-      takenPiece: 'e',
+      takenPiece: "e",
       moveOrder: moveOrder,
     });
     res.sendStatus(201);
@@ -58,7 +58,10 @@ router.post("/", async (req, res) => {
     const toSquare = [req.body.toX, req.body.toY];
     const piece = req.body.piece;
     let takenPiece = gameState[toSquare[0]][toSquare[1]];
-
+    console.log("toSquare: ", toSquare);
+    console.log("piece: ", piece);
+    console.log("takenPiece: ", takenPiece);
+    console.log("colo: ", piece.color);
     //unmark rooks and kings when moved
     if (gameState[piece.row][piece.col].length == 3) {
       gameState[piece.row][piece.col].length = 2;
@@ -73,7 +76,6 @@ router.post("/", async (req, res) => {
       takenPiece = gameState[piece.row][toSquare[1]];
       gameState[piece.row][toSquare[1]] = "e";
     }
-    console.log(gameMoves);
     gameState[toSquare[0]][toSquare[1]] =
       piece.color == "white" ? "l" + piece.pieceType : "d" + piece.pieceType;
     gameState[piece.row][piece.col] = "e";
@@ -86,7 +88,7 @@ router.post("/", async (req, res) => {
       moveOrder: moveOrder,
     });
     // console.log("gameMoves out:", gameMoves);
-    // console.log(gameState);
+    console.log(gameState);
     res.sendStatus(201);
   } catch (err) {
     res.send(err);

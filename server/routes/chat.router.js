@@ -72,9 +72,9 @@ router.post("/", async (req, res) => {
   } else {
     const toSquare = thisMove.slice(thisMove.length - 2);
     const fromPiece = thisMove.slice(0, thisMove.length - 2).trim();
-    
-    aiMove.toX = convertToCol(toSquare[0]);
-    aiMove.toY = Number(toSquare[1]) - 1;
+
+    aiMove.toY = convertToCol(toSquare[0]);
+    aiMove.toX = Number(toSquare[1]) - 1;
 
     // other piece move
     regex = /^[RNBQK]/;
@@ -120,7 +120,7 @@ router.post("/", async (req, res) => {
     }
   }
   // });
-  aiMove.aiPiece = pieceMoved;
+  aiMove.aiPiece = pieceMoved[0];
 
   res.sendStatus(201);
 });
