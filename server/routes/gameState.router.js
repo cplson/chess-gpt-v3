@@ -17,9 +17,9 @@ const gameState =
     ["lrq", "ln", "lb", "lq", "lku", "lb", "ln", "lrk"],
     ["lp", "lp", "lp", "lp", "lp", "lp", "lp", "lp"],
     ["e", "e", "e", "e", "e", "e", "e", "e"],
-    ["e", "e", "e", "e", "e", "e", "e", "e"],
-    ["e", "e", "e", "e", "e", "e", "e", "e"],
-    ["e", "e", "e", "e", "e", "e", "e", "e"],
+    ["e", "e", "db", "e", "e", "e", "e", "e"],
+    ["e", "e", "e", "e", "e", "e", "lp", "e"],
+    ["e", "e", "db", "e", "db", "e", "e", "e"],
     ["dp", "dp", "dp", "dp", "dp", "dp", "dp", "dp"],
     ["drq", "dn", "db", "dq", "dku", "db", "dn", "drk"],
   ];

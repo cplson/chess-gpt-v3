@@ -55,7 +55,7 @@ router.post("/", async (req, res) => {
   // possibleMoveTypes[index] = move.replace(/[\s-x+]/g, "");
   // console.log(possibleMoveTypes[index]);
   // const thisMove = possibleMoveTypes[index];
-  const thisMove = "N a6";
+  const thisMove = "fg6";
   let regex = /^[0o]/i;
 
   if (regex.test(thisMove)) {
@@ -65,27 +65,52 @@ router.post("/", async (req, res) => {
     console.log("pawn promo");
   } else {
     const toSquare = thisMove.slice(thisMove.length - 2);
-    const fromPiece = thisMove.slice(0, thisMove.length - 2);
-    // console.log(fromPiece, toSquare);
+    const fromPiece = thisMove.slice(0, thisMove.length - 2).trim();
 
     // other piece move
     regex = /^[RNBQK]/;
     if (regex.test(fromPiece)) {
       const pieceType = fromPiece[0].toLowerCase();
-      const movedPiece = pieces.filter((piece) => {
-        console.log("piece being checked: ", piece);
+      const possiblePieces = pieces.filter((piece) => {
         return destinationInSet(piece, pieceType, toSquare);
       });
 
-      console.log("movedPiece(s): ", movedPiece);
-      // cases
-      // just pieceType - length == 1
-      // length == 2 - determine if rank or file
-      // length == 3 rank and file
+      // console.log("possiblePieces(s): ", possiblePieces);
+      // const COL = convertToCol(toSquare[0]);
+      // const ROW = Number(toSquare[1]) - 1
+      // console.log([ROW, COL])
+
+      if (fromPiece.length == 2) {
+        if (/[a-z]/i.test(fromPiece[1])) {
+          const pieceMoved = possiblePieces.filter(
+            (piece) => piece.col == convertToCol(fromPiece[1])
+          );
+        } else {
+          const pieceMoved = possiblePieces.filter(
+            (piece) => piece.row == Number(fromPiece[1]) - 1
+          );
+        }
+      }
+      else if (fromPiece.length == 3) {
+        const pieceMoved = possiblePieces.filter(
+          (piece) =>
+            piece.row == Number(fromPiece[2]) - 1 &&
+            piece.col == convertToCol(fromPiece[1])
+        );
+      }
+     
     }
     // pawn move
     else {
-      console.log("pawn");
+      // if length == 0, use toSquare file
+      if(fromPiece.length == 0){
+        const pawn = pieces.filter(piece => piece.pieceType == 'p' && convertToCol(toSquare[0]) == piece.col)
+      }
+      else{
+        // else use 
+        const pawn = pieces.filter(piece => piece.pieceType == 'p' && convertToCol(fromPiece[0]) == piece.col)
+        console.log('pawn is: ', pawn)
+      }
     }
   }
   // });
@@ -97,16 +122,11 @@ router.post("/", async (req, res) => {
 function destinationInSet(piece, pieceType, toSquare) {
   let possiblePiece = false;
   if (piece.pieceType == pieceType) {
-    console.log(piece.pieceType, pieceType);
     piece.moveset.forEach((move) => {
-      console.log("first check: ", move[0], Number(toSquare[1]) - 1);
-      console.log("second check: ", determineFile(move[1]), toSquare[0]);
-
       if (
         move[0] == Number(toSquare[1]) - 1 &&
         determineFile(move[1]) == toSquare[0]
       ) {
-        console.log("MATCH MADE IN HEAVEN");
         possiblePiece = true;
       }
     });
@@ -117,5 +137,10 @@ function destinationInSet(piece, pieceType, toSquare) {
 function determineFile(col) {
   const COLUMN = String(col).charCodeAt(0);
   return String.fromCharCode(COLUMN + 17).toLowerCase();
+}
+
+function convertToCol(file) {
+  const FILE = String(file).charCodeAt(0);
+  return Number(String.fromCharCode(FILE - 49));
 }
 module.exports = router;
