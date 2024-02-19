@@ -1,4 +1,3 @@
-// import OpenAI from "openai";
 const openAi = require("openai");
 const express = require("express");
 const router = express.Router();
@@ -7,10 +6,17 @@ const openai = new openAi();
 
 router.use(express.json());
 
+let aiMove = {
+  aiPiece: {},
+  toX: 0,
+  toY: 0,
+};
+let pieceMoved;
+
 router.get("/", async (req, res) => {
   // GET route code here
 
-  res.send(console.log("yay"));
+  res.send(aiMove);
 });
 
 router.post("/", async (req, res) => {
@@ -66,6 +72,9 @@ router.post("/", async (req, res) => {
   } else {
     const toSquare = thisMove.slice(thisMove.length - 2);
     const fromPiece = thisMove.slice(0, thisMove.length - 2).trim();
+    
+    aiMove.toX = convertToCol(toSquare[0]);
+    aiMove.toY = Number(toSquare[1]) - 1;
 
     // other piece move
     regex = /^[RNBQK]/;
@@ -75,47 +84,44 @@ router.post("/", async (req, res) => {
         return destinationInSet(piece, pieceType, toSquare);
       });
 
-      // console.log("possiblePieces(s): ", possiblePieces);
-      // const COL = convertToCol(toSquare[0]);
-      // const ROW = Number(toSquare[1]) - 1
-      // console.log([ROW, COL])
-
       if (fromPiece.length == 2) {
         if (/[a-z]/i.test(fromPiece[1])) {
-          const pieceMoved = possiblePieces.filter(
+          pieceMoved = possiblePieces.filter(
             (piece) => piece.col == convertToCol(fromPiece[1])
           );
         } else {
-          const pieceMoved = possiblePieces.filter(
+          pieceMoved = possiblePieces.filter(
             (piece) => piece.row == Number(fromPiece[1]) - 1
           );
         }
-      }
-      else if (fromPiece.length == 3) {
-        const pieceMoved = possiblePieces.filter(
+      } else if (fromPiece.length == 3) {
+        pieceMoved = possiblePieces.filter(
           (piece) =>
             piece.row == Number(fromPiece[2]) - 1 &&
             piece.col == convertToCol(fromPiece[1])
         );
       }
-     
     }
     // pawn move
     else {
       // if length == 0, use toSquare file
-      if(fromPiece.length == 0){
-        const pawn = pieces.filter(piece => piece.pieceType == 'p' && convertToCol(toSquare[0]) == piece.col)
-      }
-      else{
-        // else use 
-        const pawn = pieces.filter(piece => piece.pieceType == 'p' && convertToCol(fromPiece[0]) == piece.col)
-        console.log('pawn is: ', pawn)
+      if (fromPiece.length == 0) {
+        pieceMoved = pieces.filter(
+          (piece) =>
+            piece.pieceType == "p" && convertToCol(toSquare[0]) == piece.col
+        );
+      } else {
+        // else use
+        pieceMoved = pieces.filter(
+          (piece) =>
+            piece.pieceType == "p" && convertToCol(fromPiece[0]) == piece.col
+        );
       }
     }
   }
   // });
+  aiMove.aiPiece = pieceMoved;
 
-  // const move = "dxe4+"
   res.sendStatus(201);
 });
 

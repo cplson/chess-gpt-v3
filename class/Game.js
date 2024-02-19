@@ -305,7 +305,13 @@ async function transitionTurns() {
       state: gameState,
     });
     if (prompt.status == 201) {
-      console.log("shiii");
+      try {
+        const response = await axios.get("http://localhost:5000/api/chat");
+        const aiMove = response.data;
+        console.log("aiMove is: ", aiMove);
+      } catch (err) {
+        console.log(err);
+      }
     }
   }
 }
