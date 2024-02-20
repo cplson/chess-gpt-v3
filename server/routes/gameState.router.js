@@ -17,9 +17,9 @@ const gameState =
     ["lrq", "ln", "lb", "lq", "lku", "lb", "ln", "lrk"],
     ["lp", "lp", "lp", "lp", "lp", "lp", "lp", "lp"],
     ["e", "e", "e", "e", "e", "e", "e", "e"],
-    ["e", "e", "db", "e", "e", "e", "e", "e"],
-    ["e", "e", "e", "e", "e", "e", "lp", "e"],
-    ["e", "e", "db", "e", "db", "e", "e", "e"],
+    ["e", "e", "e", "e", "e", "e", "e", "e"],
+    ["e", "e", "e", "e", "e", "e", "e", "e"],
+    ["e", "e", "e", "e", "e", "e", "e", "e"],
     ["dp", "dp", "dp", "dp", "dp", "dp", "dp", "dp"],
     ["drq", "dn", "db", "dq", "dku", "db", "dn", "drk"],
   ];
@@ -58,10 +58,10 @@ router.post("/", async (req, res) => {
     const toSquare = [req.body.toX, req.body.toY];
     const piece = req.body.piece;
     let takenPiece = gameState[toSquare[0]][toSquare[1]];
-    console.log("toSquare: ", toSquare);
-    console.log("piece: ", piece);
-    console.log("takenPiece: ", takenPiece);
-    console.log("colo: ", piece.color);
+    // console.log("toSquare: ", toSquare);
+    // console.log("piece: ", piece);
+    // console.log("takenPiece: ", takenPiece);
+    // console.log("colo: ", piece.color);
     //unmark rooks and kings when moved
     if (gameState[piece.row][piece.col].length == 3) {
       gameState[piece.row][piece.col].length = 2;
@@ -88,7 +88,6 @@ router.post("/", async (req, res) => {
       moveOrder: moveOrder,
     });
     // console.log("gameMoves out:", gameMoves);
-    console.log(gameState);
     res.sendStatus(201);
   } catch (err) {
     res.send(err);
